@@ -60,5 +60,11 @@ public class Config
                 .sslSocketFactory(certificates.sslSocketFactory(), certificates.trustManager())
                 .build();
    }
+
+   @Bean
+   public String starlingAccountUrl()
+   {
+      return "https://api-sandbox.starlingbank.com/api/v2/accounts";
+   }
 }
 //https://stackoverflow.com/questions/69638375/how-to-add-certificate-on-okhttp

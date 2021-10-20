@@ -1,6 +1,8 @@
 package com.tarikh.interview.starling.domain;
 
+import java.util.Optional;
+
 public interface CategoeryQueryPort
 {
-   public String queryCategoryPort(String accUId);
+   public Optional<String> queryCategoryPort(String accUId);
 }

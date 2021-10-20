@@ -13,6 +13,8 @@ import com.tarikh.interview.starling.domain.models.TimestampDuration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Optional;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -32,11 +34,13 @@ public class RoundUpHandler implements RoundUpPort
       log.info("publishToGoal:+ object recieved={}", timestampDuration);
 
       //Fetch the category for the given accUId
-      String categoryID = categoeryQueryPort.queryCategoryPort(timestampDuration.getAccountDetails().getAccountUId());
+      //TODO: cover use case for when optional is empty
+      Optional<String> categoryID = categoeryQueryPort.queryCategoryPort(timestampDuration.getAccountDetails().getAccountUId());
 
       //Fetch list of transaction
       calculateWeekDuration(timestampDuration);
-      timestampDuration.getAccountDetails().setCategoryId(categoryID);
+      timestampDuration.getAccountDetails().setCategoryId(categoryID.get());
+
       transactionQueryPort.queryForTransactionsBasedOnTimeframe(timestampDuration);
 
    }
@@ -44,6 +48,6 @@ public class RoundUpHandler implements RoundUpPort
    private void calculateWeekDuration(TimestampDuration timestampDuration)
    {
       timestampDuration.setTimestampEnd(timestampDuration.getTimestampBegin().plus(7, DAYS));
-      log.info("calculateWeekDuration:- timestamptDuration={}", timestampDuration);
+      log.info("calculateWeekDuration:+/- calculated 1 week of transaction={}", timestampDuration);
    }
 }
