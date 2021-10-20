@@ -66,5 +66,10 @@ public class Config
    {
       return "https://api-sandbox.starlingbank.com/api/v2/accounts";
    }
+
+   @Bean
+   public String starlingTransactionUrl()
+   {
+      return "https://api-sandbox.starlingbank.com/api/v2/feed/account/{accountUId}/category/{categoryUId}/transactions-between";
+   }
 }
-//https://stackoverflow.com/questions/69638375/how-to-add-certificate-on-okhttp

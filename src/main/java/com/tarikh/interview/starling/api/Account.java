@@ -8,12 +8,12 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Account {
     @JsonProperty("accountUid")
-    public String name;
+    public String accountUId;
 
     @JsonProperty("accountType")
     public String accountType;
 
     @JsonProperty("defaultCategory")
-    public String category;
+    public String categoryId;
 
 }

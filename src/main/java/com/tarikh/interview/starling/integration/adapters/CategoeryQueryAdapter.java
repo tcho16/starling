@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tarikh.interview.starling.api.Account;
 import com.tarikh.interview.starling.api.Accounts;
+import com.tarikh.interview.starling.domain.models.AccountDetails;
 import org.springframework.stereotype.Component;
 
 import com.tarikh.interview.starling.domain.CategoeryQueryPort;
@@ -24,7 +25,7 @@ public class CategoeryQueryAdapter implements CategoeryQueryPort {
     private final String starlingAccountUrl;
 
     @Override
-    public Optional<String> queryCategoryPort(String accUId) {
+    public Optional<AccountDetails> queryCategoryPort(String accUId) {
         log.info("queryCategoryPort:+ fetching accounts for accUId={}", accUId);
         Request request = new Request.Builder()
                 .url(starlingAccountUrl)
@@ -41,11 +42,12 @@ public class CategoeryQueryAdapter implements CategoeryQueryPort {
 
             ObjectMapper mapper = new ObjectMapper();
             Accounts accounts = mapper.readValue(response, Accounts.class);
-            Optional<String> primaryCategoryID = accounts.getAccountList().stream()
-                    .filter(account -> account.accountType.equalsIgnoreCase("PRIMARY"))
-                    .findFirst()
-                    .map(account -> Optional.ofNullable(account.category))
-                    .orElse(Optional.empty());
+            Optional<AccountDetails> primaryCategoryID = accounts.getAccountList()
+                                                                .stream()
+                                                                .filter(account -> account.accountType.equalsIgnoreCase("PRIMARY"))
+                                                                .findFirst()
+                                                                .map(account -> AccountDetails.builder().accountUId(account.accountUId).categoryId(account.categoryId).build());
+
             log.info("queryCategoryPort:- fetched categoryId={}", primaryCategoryID);
             return primaryCategoryID;
         } catch (IOException e) {

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tarikh.interview.starling.api.TimestampDTO;
-import com.tarikh.interview.starling.domain.RoundUpPort;
+import com.tarikh.interview.starling.domain.PublishRoundUpPort;
 import com.tarikh.interview.starling.domain.models.TimestampDuration;
 import com.tarikh.interview.starling.integration.converters.TimestampDTOToTimestampDurationConverter;
 
@@ -19,13 +19,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RoundUpController
 {
-   private final RoundUpPort roundUpHandler;
+   private final PublishRoundUpPort roundUpHandler;
    private final TimestampDTOToTimestampDurationConverter converter;
 
    @Autowired
-   public RoundUpController(RoundUpPort roundUpPort, TimestampDTOToTimestampDurationConverter converter)
+   public RoundUpController(PublishRoundUpPort publishRoundUpPort, TimestampDTOToTimestampDurationConverter converter)
    {
-      this.roundUpHandler = roundUpPort;
+      this.roundUpHandler = publishRoundUpPort;
       this.converter = converter;
    }
 
@@ -36,12 +36,12 @@ public class RoundUpController
 
    }
 
-   @PostMapping("{accUId}/saving-goals/transactions/roundup")
-   public void postTransactions(@NonNull @PathVariable String accUId,
+   @PostMapping("{accHolderUId}/saving-goals/transactions/roundup")
+   public void postTransactions(@NonNull @PathVariable String accHolderUId,
                                 @NonNull @RequestBody TimestampDTO timestampDTO)
    {
       log.info("postTransactions:+ received request for timestamp={}", timestampDTO);
-      TimestampDuration timestampDuration = converter.convert(accUId, timestampDTO);
+      TimestampDuration timestampDuration = converter.convert(accHolderUId, timestampDTO);
       roundUpHandler.publishToGoal(timestampDuration);
 
       log.info("postTransactions:-");
