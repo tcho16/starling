@@ -2,7 +2,9 @@ package com.tarikh.interview.starling.domain.handlers;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
+import com.tarikh.interview.starling.domain.SavingGoalPort;
 import com.tarikh.interview.starling.domain.models.AccountDetails;
+import com.tarikh.interview.starling.domain.models.GoalUpdater;
 import org.springframework.stereotype.Component;
 
 import com.tarikh.interview.starling.domain.CategoeryQueryPort;
@@ -28,7 +30,8 @@ public class PublishRoundUpHandler implements PublishRoundUpPort
    //if goal doesn't exist, create one else input money into that goal
    private final CategoeryQueryPort categoeryQueryPort;
    private final TransactionQueryPort transactionQueryPort;
-   private final RoundUp roundUp;
+   private final SavingGoalPort savingGoalPort;
+   private final RoundUpCalculator roundUpCalculator;
 
    @Override
    public void publishToGoal(TimestampDuration timestampDuration)
@@ -45,8 +48,16 @@ public class PublishRoundUpHandler implements PublishRoundUpPort
       timestampDuration.getAccountDetails().setCategoryId(accountDetails.get().getCategoryId());
       timestampDuration.getAccountDetails().setAccountUId(accountDetails.get().getAccountUId());
 
-      List<Integer> integers = transactionQueryPort.queryForTransactionsBasedOnTimeframe(timestampDuration);
-      roundUp.nearestPoundTotaler(integers);
+      List<Integer> integers = transactionQueryPort.queryTransactionAmountsBasedOnTimeframe(timestampDuration);
+      double totalSavedUpFromTransactions = roundUpCalculator.totalNearestPound(integers);
+
+      GoalUpdater goalUpdater = GoalUpdater.builder()
+              .accUId(accountDetails.get().getAccountUId())
+              .nameOfGoal("Starling Test Interview")
+              .amountToAdd(totalSavedUpFromTransactions).build();
+
+
+      savingGoalPort.sendMoneyToGoal(goalUpdater);
 
 
    }

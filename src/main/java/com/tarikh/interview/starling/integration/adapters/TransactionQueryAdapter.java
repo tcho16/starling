@@ -25,7 +25,7 @@ public class TransactionQueryAdapter implements TransactionQueryPort {
     private final OkHttpClient client;
 
     @Override
-    public List<Integer> queryForTransactionsBasedOnTimeframe(TimestampDuration timestampDuration) {
+    public List<Integer> queryTransactionAmountsBasedOnTimeframe(TimestampDuration timestampDuration) {
 
         log.info("queryForTransactionsBasedOnTimeframe:+ calling the transaction query endpoint");
 

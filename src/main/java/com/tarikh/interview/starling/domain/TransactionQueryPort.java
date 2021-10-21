@@ -6,5 +6,5 @@ import com.tarikh.interview.starling.domain.models.TimestampDuration;
 
 public interface TransactionQueryPort
 {
-   List<Integer> queryForTransactionsBasedOnTimeframe(TimestampDuration timestampDuration);
+   List<Integer> queryTransactionAmountsBasedOnTimeframe(TimestampDuration timestampDuration);
 }

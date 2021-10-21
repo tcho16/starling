@@ -72,4 +72,16 @@ public class Config
    {
       return "https://api-sandbox.starlingbank.com/api/v2/feed/account/{accountUId}/category/{categoryUId}/transactions-between";
    }
+
+   @Bean
+   public String starlingGoalUrl()
+   {
+      return "https://api-sandbox.starlingbank.com/api/v2/account/{accountUId}/savings-goals";
+   }
+
+   @Bean
+   public String starlingGoalAddMoneyUrl()
+   {
+      return "https://api-sandbox.starlingbank.com/api/v2/account/{accountUid}/savings-goals/{savingsGoalUid}/add-money/{transferUid}";
+   }
 }
