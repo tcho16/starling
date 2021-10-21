@@ -4,13 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-
-@JsonDeserialize
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Slf4j
+@NoArgsConstructor
 @Data
-public class Accounts {
-    @JsonProperty("accounts")
-    List<Account> accountList;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class TransactionDTO {
+
+    @JsonProperty("accountUid")
+    private int transactionAmount;
+
 }

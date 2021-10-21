@@ -13,6 +13,7 @@ import com.tarikh.interview.starling.domain.models.TimestampDuration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -41,7 +42,9 @@ public class PublishRoundUpHandler implements PublishRoundUpPort
       calculateWeekDuration(timestampDuration);
       timestampDuration.getAccountDetails().setCategoryId(accountDetails.get().getCategoryId());
       timestampDuration.getAccountDetails().setAccountUId(accountDetails.get().getAccountUId());
-      transactionQueryPort.queryForTransactionsBasedOnTimeframe(timestampDuration);
+      List<Integer> integers = transactionQueryPort.queryForTransactionsBasedOnTimeframe(timestampDuration);
+
+
 
    }
 
