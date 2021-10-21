@@ -28,6 +28,7 @@ public class PublishRoundUpHandler implements PublishRoundUpPort
    //if goal doesn't exist, create one else input money into that goal
    private final CategoeryQueryPort categoeryQueryPort;
    private final TransactionQueryPort transactionQueryPort;
+   private final RoundUp roundUp;
 
    @Override
    public void publishToGoal(TimestampDuration timestampDuration)
@@ -40,10 +41,12 @@ public class PublishRoundUpHandler implements PublishRoundUpPort
 
       //Fetch list of transaction
       calculateWeekDuration(timestampDuration);
+
       timestampDuration.getAccountDetails().setCategoryId(accountDetails.get().getCategoryId());
       timestampDuration.getAccountDetails().setAccountUId(accountDetails.get().getAccountUId());
-      List<Integer> integers = transactionQueryPort.queryForTransactionsBasedOnTimeframe(timestampDuration);
 
+      List<Integer> integers = transactionQueryPort.queryForTransactionsBasedOnTimeframe(timestampDuration);
+      roundUp.nearestPoundTotaler(integers);
 
 
    }

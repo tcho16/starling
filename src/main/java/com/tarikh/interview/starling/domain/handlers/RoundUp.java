@@ -11,9 +11,9 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class RoundUp {
-
-    public BigDecimal nearestPoundTotaler(List<Integer> transactions)
+public class RoundUp
+{
+    public double nearestPoundTotaler(List<Integer> transactions)
     {
         BigDecimal total = new BigDecimal(0.00);
 
@@ -24,6 +24,6 @@ public class RoundUp {
             BigDecimal divide = penceToNearestNextPound.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
             total = total.add(divide);;
         }
-        return total;
+        return total.doubleValue();
     }
 }
