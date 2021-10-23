@@ -2,69 +2,71 @@ package com.tarikh.interview.starling.domain.handlers;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
-import com.tarikh.interview.starling.domain.SavingGoalPort;
+import com.tarikh.interview.starling.domain.*;
 import com.tarikh.interview.starling.domain.models.AccountDetails;
-import com.tarikh.interview.starling.domain.models.GoalUpdater;
+import com.tarikh.interview.starling.domain.models.GoalContainer;
+import com.tarikh.interview.starling.domain.models.TransactionTimeFrame;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
-import com.tarikh.interview.starling.domain.CategoeryQueryPort;
-import com.tarikh.interview.starling.domain.PublishRoundUpPort;
-import com.tarikh.interview.starling.domain.TransactionQueryPort;
-import com.tarikh.interview.starling.domain.models.TimestampDuration;
+import com.tarikh.interview.starling.domain.models.GoalTimeframe;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class PublishRoundUpHandler implements PublishRoundUpPort
 {
-   //LOGIC
-   //Create Payload containing timestamp
-   //Fetch the list of transactions from: /api/v2/feed/account/{accountUid}/category/{categoryUid}/transactions-between
-   //Once fetched the list of transaction, Fetch the list of goals and check if your goal is created
-   //if goal doesn't exist, create one else input money into that goal
-   private final CategoeryQueryPort categoeryQueryPort;
+   private final AccountIdQueryPort accountIdQueryPort;
    private final TransactionQueryPort transactionQueryPort;
    private final SavingGoalPort savingGoalPort;
    private final RoundUpCalculator roundUpCalculator;
 
+   @SneakyThrows
    @Override
-   public void publishToGoal(TimestampDuration timestampDuration)
+   public void publishToGoal(GoalTimeframe goalTimeframe)
    {
-      log.info("publishToGoal:+ object recieved={}", timestampDuration);
+      log.info("publishToGoal:+ goal={}", goalTimeframe);
 
-      //Fetch the category for the given accUId
-      //TODO: cover use case for when optional is empty
-      Optional<AccountDetails> accountDetails = categoeryQueryPort.queryCategoryPort(timestampDuration.getAccountDetails().getAccountUId());
+      //Fetch the categoryId and accountId for the given accountHolderUId
+      AccountDetails accountDetails = accountIdQueryPort.fetchAccountIds(goalTimeframe.getAccountHolderId());
 
-      //Fetch list of transaction
-      calculateWeekDuration(timestampDuration);
+      //Building a domain object so we can use it in the adapters
+      TransactionTimeFrame transactionTimeFrame = buildTransactionTimeFrame(accountDetails, goalTimeframe.getTimestampBegin());
 
-      timestampDuration.getAccountDetails().setCategoryId(accountDetails.get().getCategoryId());
-      timestampDuration.getAccountDetails().setAccountUId(accountDetails.get().getAccountUId());
+      //Fetch transactions from between date
+      List<Integer> integers = transactionQueryPort.queryTransactionAmountsBasedOnTimeframe(transactionTimeFrame);
 
-      List<Integer> integers = transactionQueryPort.queryTransactionAmountsBasedOnTimeframe(timestampDuration);
+      //Calculating the nearest rounded amount to insert into goal
       double totalSavedUpFromTransactions = roundUpCalculator.totalNearestPound(integers);
 
-      GoalUpdater goalUpdater = GoalUpdater.builder()
-              .accUId(accountDetails.get().getAccountUId())
-              .nameOfGoal("POPStarling Test Intervieww")
-              .amountToAdd(totalSavedUpFromTransactions).build();
+      //Create a goalContainer to be used in the adapters
+      GoalContainer goalContainer = buildGoalUpdater(totalSavedUpFromTransactions, accountDetails.getAccountUId(), goalTimeframe.getGoalName());
 
-
-      savingGoalPort.sendMoneyToGoal(goalUpdater);
-
-
+      //Call the saving goal adapter to persist what we have done
+      savingGoalPort.sendMoneyToGoal(goalContainer);
+      log.info("publishToGoal:- goal has been updated with rounded amount.");
    }
 
-   private void calculateWeekDuration(TimestampDuration timestampDuration)
-   {
-      timestampDuration.setTimestampEnd(timestampDuration.getTimestampBegin().plus(7, DAYS));
-      log.info("calculateWeekDuration:+/- calculated 1 week of transaction={}", timestampDuration);
+   private GoalContainer buildGoalUpdater( double totalSavedUpFromTransactions, String accountId, String goalName) {
+      return GoalContainer.builder()
+              .amountToAdd(totalSavedUpFromTransactions)
+              .nameOfGoal(goalName)
+              .accUId(accountId)
+              .build();
+   }
+
+   private TransactionTimeFrame buildTransactionTimeFrame(AccountDetails accountDetails, Instant timestampBegin) {
+      return TransactionTimeFrame.builder()
+              .categoryId(accountDetails.getCategoryId())
+              .accountId(accountDetails.getAccountUId())
+              .timestampBegin(timestampBegin)
+              .timestampEnd(timestampBegin.plus(7, DAYS))
+              .build();
    }
 }

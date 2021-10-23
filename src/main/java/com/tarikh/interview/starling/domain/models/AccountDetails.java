@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @Data
 public class AccountDetails
 {
+   private String accountHolderUId;
    private String accountUId;
    private String categoryId;
 }

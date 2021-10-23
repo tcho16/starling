@@ -22,7 +22,7 @@ public class RoundUpCalculator
             int penceAmount = amount % 100;
             BigDecimal penceToNearestNextPound = new BigDecimal(100 - penceAmount);
             BigDecimal divide = penceToNearestNextPound.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-            total = total.add(divide);;
+            total = total.add(divide);
         }
 
         return total.multiply(new BigDecimal(100)).intValueExact();

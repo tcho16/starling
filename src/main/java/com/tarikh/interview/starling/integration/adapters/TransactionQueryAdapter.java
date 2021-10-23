@@ -1,7 +1,9 @@
 package com.tarikh.interview.starling.integration.adapters;
 
 import com.tarikh.interview.starling.domain.TransactionQueryPort;
-import com.tarikh.interview.starling.domain.models.TimestampDuration;
+import com.tarikh.interview.starling.domain.models.GoalTimeframe;
+import com.tarikh.interview.starling.domain.models.TransactionTimeFrame;
+import com.tarikh.interview.starling.integration.exceptions.UnableToRetrieveTransactionException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +29,11 @@ public class TransactionQueryAdapter implements TransactionQueryPort {
     private final OkHttpClient client;
 
     @Override
-    public List<Integer> queryTransactionAmountsBasedOnTimeframe(TimestampDuration timestampDuration) {
+    public List<Integer> queryTransactionAmountsBasedOnTimeframe(TransactionTimeFrame timeFrame) throws UnableToRetrieveTransactionException {
 
         log.info("queryForTransactionsBasedOnTimeframe:+ calling the transaction query endpoint");
 
-        Request request = buildRequest(timestampDuration);
+        Request request = buildRequest(timeFrame);
         List<Integer> transactions = new ArrayList<>();
 
         try {
@@ -47,40 +49,36 @@ public class TransactionQueryAdapter implements TransactionQueryPort {
             for(int i = 0; i < feedItems.length(); i++)
             {
                 Integer amount = feedItems.getJSONObject(i).getJSONObject("amount").getInt("minorUnits");
-
                 transactions.add(amount);
             }
 
            return transactions;
 
-        } catch (IOException e) {
-            System.out.println("in the exception!");
-            e.printStackTrace();
-            return List.of();
+        } catch (Exception e) {
+            throw new UnableToRetrieveTransactionException("Error retrieving transaction for accountId=" + timeFrame.getAccountId());
         }
     }
 
-    //TODO: Extract authToken
-    private Request buildRequest(TimestampDuration timestampDuration) {
+    private Request buildRequest(TransactionTimeFrame timeFrame) {
         return new Request.Builder()
-                .url(buildURL(starlingTransactionUrl, timestampDuration))
+                .url(buildURL(starlingTransactionUrl, timeFrame))
                 .header("Authorization",
                         "Bearer " + accessToken)
                 .build();
     }
 
     @SneakyThrows
-    private URL buildURL(String url, TimestampDuration timestampDuration) {
-        log.info("buildURL:+ building the URL from the object={}", timestampDuration);
+    private URL buildURL(String url, TransactionTimeFrame timeFrame) {
+        log.info("buildURL:+ building the URL from the object={}", timeFrame);
 
         URL finalURL = UriComponentsBuilder.fromHttpUrl(url)
                 .queryParam("minTransactionTimestamp={minTime}")
                 .queryParam("maxTransactionTimestamp={maxTime}")
                 .buildAndExpand(
-                        timestampDuration.getAccountDetails().getAccountUId(),
-                        timestampDuration.getAccountDetails().getCategoryId(),
-                        timestampDuration.getTimestampBegin().toString(),
-                        timestampDuration.getTimestampEnd().toString())
+                        timeFrame.getAccountId(),
+                        timeFrame.getCategoryId(),
+                        timeFrame.getTimestampBegin().toString(),
+                        timeFrame.getTimestampEnd().toString())
                 .toUri()
                 .toURL();
 

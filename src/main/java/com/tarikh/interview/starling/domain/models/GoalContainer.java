@@ -11,8 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Builder
 @Data
-public class GoalUpdater {
+public class GoalContainer {
     private double amountToAdd;
     private String accUId;
     private String nameOfGoal;
+    private String goalId;
 }

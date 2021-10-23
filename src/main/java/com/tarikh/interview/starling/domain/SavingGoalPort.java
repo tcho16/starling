@@ -1,11 +1,8 @@
 package com.tarikh.interview.starling.domain;
 
-import com.tarikh.interview.starling.domain.models.GoalUpdater;
+import com.tarikh.interview.starling.domain.models.GoalContainer;
 
 public interface SavingGoalPort {
-//    void create();
-//
-//    void fetchGoals();
 
-    void sendMoneyToGoal(GoalUpdater goalUpdater);
+    void sendMoneyToGoal(GoalContainer goalContainer);
 }

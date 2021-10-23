@@ -6,9 +6,9 @@ import java.time.format.DateTimeFormatter;
 
 import org.springframework.stereotype.Component;
 
-import com.tarikh.interview.starling.api.TimestampDTO;
+import com.tarikh.interview.starling.api.GoalTimeframeDTO;
 import com.tarikh.interview.starling.domain.models.AccountDetails;
-import com.tarikh.interview.starling.domain.models.TimestampDuration;
+import com.tarikh.interview.starling.domain.models.GoalTimeframe;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,18 +19,17 @@ import lombok.extern.slf4j.Slf4j;
 public class TimestampDTOToTimestampDurationConverter
 {
 
-   public TimestampDuration convert(String accUId, TimestampDTO source)
+   public GoalTimeframe convert(String accountHolderId, GoalTimeframeDTO dto)
    {
-      log.info("convert:+ building the object using timestamp for accountId={}", source.getTimestamp(), accUId);
+      log.info("convert:+ building the object using timestamp for accountHolderId={}", dto.getTimestamp(), accountHolderId);
 
-      TimestampDuration timestampDuration = TimestampDuration.builder()
-                                                             .timestampBegin(formatTimestamp(source.getTimestamp()))
-                                                             .accountDetails(AccountDetails.builder()
-                                                                                           .accountUId(accUId)
-                                                                                           .build())
-                                                             .build();
-      log.info("convert:- built object={}", timestampDuration);
-      return timestampDuration;
+      GoalTimeframe goalTimeframe = GoalTimeframe.builder()
+                                                  .accountHolderId(accountHolderId)
+                                                  .goalName(dto.getSavingGoalName())
+                                                  .timestampBegin(formatTimestamp(dto.getTimestamp()))
+                                                  .build();
+      log.info("convert:- built object={}", goalTimeframe);
+      return goalTimeframe;
    }
 
    private Instant formatTimestamp(String timestamp)
@@ -38,7 +37,6 @@ public class TimestampDTOToTimestampDurationConverter
       final DateTimeFormatter formatter = DateTimeFormatter
                                              .ofPattern("yyyy-MM-dd HH:mm:ss")
                                              .withZone(ZoneId.systemDefault());
-
       return Instant.from(formatter.parse(timestamp));
 
    }
