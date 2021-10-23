@@ -1,6 +1,8 @@
 package com.tarikh.interview.starling.integration.adapters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tarikh.interview.starling.api.Amount;
+import com.tarikh.interview.starling.api.AmountDTO;
 import com.tarikh.interview.starling.api.GoalDTO;
 import com.tarikh.interview.starling.domain.SavingGoalPort;
 import com.tarikh.interview.starling.domain.models.GoalUpdater;
@@ -17,10 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -37,25 +36,69 @@ public class SavingGoalAdapter implements SavingGoalPort {
         log.info("sendMoneyToGoal:+ Sending this to the goal={}", goalUpdater);
         //First fetch goals ? if exist then update : create goal then send amount
 
-        List<String> listOfSavingGoals = fetchCurrentGoalsDetails(goalUpdater.getAccUId());
-        Map<String, String> goal = new HashMap<>();
-
+        HashMap<String, String> listOfSavingGoals = fetchCurrentGoalsDetails(goalUpdater.getAccUId());
         if(savingGoalDoesNotExists(goalUpdater, listOfSavingGoals))
         {
             //create the goal
             System.out.println("Creating the goal as goal is not present");
-            goal = createGoal(goalUpdater);
+            Map<String, String> goal = createGoal(goalUpdater);
+            for (Map.Entry<String, String> stringStringEntry : goal.entrySet()) {
+                listOfSavingGoals.put(stringStringEntry.getKey(), stringStringEntry.getValue());
+            }
         }
 
         //Sending money to goal
-
-
-
+        sendMoney(goalUpdater, fetchSavingGoalUId(goalUpdater, listOfSavingGoals));
 
     }
 
-    private boolean savingGoalDoesNotExists(GoalUpdater goalUpdater, List<String> listOfSavingGoals) {
-        return !listOfSavingGoals.contains(goalUpdater.getNameOfGoal());
+    private String fetchSavingGoalUId(GoalUpdater goalUpdater, HashMap<String, String> listOfSavingGoals) {
+        for (Map.Entry<String, String> stringStringEntry : listOfSavingGoals.entrySet()) {
+            if(stringStringEntry.getValue().equalsIgnoreCase(goalUpdater.getNameOfGoal())){
+                return stringStringEntry.getKey();
+            }
+        }
+        throw new RuntimeException("Wasn't able to find the ID of the goal");
+    }
+
+    private void sendMoney(GoalUpdater goalUpdater, String goalUId) {
+        Request request = new Request.Builder()
+                .url(addMoneyUrl(starlingGoalAddMoneyUrl, goalUpdater, goalUId))
+                .put(buildRequestBodyForAddingMoneyToGoal(goalUpdater))
+                .header("Authorization",
+                        "Bearer " + accessToken)
+                .header("Accept", "application/json")
+                .build();
+
+        try {
+            String response = client.newCall(request)
+                    .execute()
+                    .body()
+                    .string();
+
+            System.out.println(response);
+            JSONObject jsonObject = new JSONObject(response);
+            boolean savingsGoalSuccess = jsonObject.getBoolean("success");
+
+            System.out.println("Saved money to goal? = "+savingsGoalSuccess);
+
+        }catch(Exception e)
+        {
+            log.error("Error in adding money to the goal", e);
+        }
+    }
+
+    private boolean savingGoalDoesNotExists(GoalUpdater goalUpdater, HashMap<String, String> listOfSavingGoals) {
+        boolean doesNotExist = true;
+
+        for (Map.Entry<String, String> stringStringEntry : listOfSavingGoals.entrySet()) {
+            if(stringStringEntry.getValue().equalsIgnoreCase(goalUpdater.getNameOfGoal()))
+            {
+                doesNotExist = false;
+                break;
+            }
+        }
+        return doesNotExist;
     }
 
     public Map<String, String> createGoal(GoalUpdater goalUpdater) {
@@ -78,15 +121,27 @@ public class SavingGoalAdapter implements SavingGoalPort {
             JSONObject jsonObject = new JSONObject(response);
             boolean savingsGoalSuccess = jsonObject.getBoolean("success");
             System.out.println("THE UID OF THE SAVING GOAL");
-            String savingsGoalsavingsGoalUid = jsonObject.getString("savingsGoalUid");
-
-            return Map.of(goalUpdater.getNameOfGoal(), savingsGoalsavingsGoalUid);
+            return Map.of(jsonObject.getString("savingsGoalUid"), goalUpdater.getNameOfGoal());
 
         }catch(Exception e)
         {
             log.error("Error in fetching the list of goals", e);
             throw new RuntimeException("Error in fetching goals");
         }
+    }
+
+    @SneakyThrows
+    private RequestBody buildRequestBodyForAddingMoneyToGoal(GoalUpdater goalUpdater) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(AmountDTO.builder()
+                .amount(Amount.builder()
+                                .currency("GBP")
+                                .minorUnits((int) goalUpdater.getAmountToAdd())
+                                .build())
+                .build());
+        System.out.println("THIS IS THE REQUEST BODY ADDING MONEY TO GOAL");
+        System.out.println(requestBody);
+        return RequestBody.create(requestBody, MediaType.parse("application/json"));
     }
 
     @SneakyThrows
@@ -103,6 +158,15 @@ public class SavingGoalAdapter implements SavingGoalPort {
     }
 
     @SneakyThrows
+    private URL addMoneyUrl(String starlingGoalUrl, GoalUpdater goalUpdater, String goalUid) {
+        URL finalURL = UriComponentsBuilder.fromHttpUrl(starlingGoalUrl)
+                .buildAndExpand(goalUpdater.getAccUId(), goalUid, UUID.randomUUID().toString())
+                .toUri()
+                .toURL();
+        return finalURL;
+    }
+
+    @SneakyThrows
     private URL buildPutGoalUrl(String starlingGoalUrl, GoalUpdater goalUpdater) {
         URL finalURL = UriComponentsBuilder.fromHttpUrl(starlingGoalUrl)
                 .buildAndExpand(goalUpdater.getAccUId())
@@ -112,10 +176,12 @@ public class SavingGoalAdapter implements SavingGoalPort {
     }
 
     //Fetches the goals the user currently has
-    public List<String> fetchCurrentGoalsDetails(String accountUid) {
+    public HashMap<String, String> fetchCurrentGoalsDetails(String accountUid) {
         log.info("fetchCurrentGoalsDetails:+ fetching the goals");
 
+        HashMap<String, String> mapOfGoals = new HashMap<>();
         List<String> listOfGoals = new ArrayList<>();
+
         //Create the request
         Request request = new Request.Builder()
                 .url(buildURLToFetchGoals(starlingGoalUrl, accountUid))
@@ -135,7 +201,9 @@ public class SavingGoalAdapter implements SavingGoalPort {
             JSONArray savingsGoalList = jsonObject.getJSONArray("savingsGoalList");
 
             for (int i = 0; i < savingsGoalList.length(); i++) {
-                listOfGoals.add(savingsGoalList.getJSONObject(i).getString("name"));
+                String goalName = savingsGoalList.getJSONObject(i).getString("name");
+                String goalUId = savingsGoalList.getJSONObject(i).getString("savingsGoalUid");
+                mapOfGoals.put(goalUId, goalName);
             }
 
         }catch(Exception e)
@@ -143,8 +211,8 @@ public class SavingGoalAdapter implements SavingGoalPort {
             log.error("Error in fetching the list of goals", e);
         }
 
-        System.out.println("-=- returning " + listOfGoals.toString());
-        return listOfGoals;
+        System.out.println("-=- returning " + mapOfGoals.toString());
+        return mapOfGoals;
 
     }
 

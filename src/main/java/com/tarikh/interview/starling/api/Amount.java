@@ -6,12 +6,10 @@ import lombok.Builder;
 
 @JsonSerialize
 @Builder
-public class GoalDTO {
-
-    @JsonProperty("name")
-    private String name;
+public class Amount
+{
     @JsonProperty("currency")
     private String currency;
-    @JsonProperty("base64EncodedPhoto")
-    private String base64EncodedPhoto;
+    @JsonProperty("minorUnits")
+    private int minorUnits;
 }
