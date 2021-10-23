@@ -53,7 +53,7 @@ public class PublishRoundUpHandler implements PublishRoundUpPort
 
       GoalUpdater goalUpdater = GoalUpdater.builder()
               .accUId(accountDetails.get().getAccountUId())
-              .nameOfGoal("Starling Test Interview")
+              .nameOfGoal("Starling Test Intervieww")
               .amountToAdd(totalSavedUpFromTransactions).build();
 
 

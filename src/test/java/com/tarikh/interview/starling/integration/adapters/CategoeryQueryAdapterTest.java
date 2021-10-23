@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 class CategoeryQueryAdapterTest {
 
+    private final String dummyToken = "dummyToken";
     private final String accHolderUId = "BOB123";
     private final String accUId = "a8ACCCCCc14-d7b4-4563-9d3d-04f391959cee";
     private final String categoryId = "a8f35c14-d7b4-4563-9d3d-04f391959cee";
@@ -33,7 +34,7 @@ class CategoeryQueryAdapterTest {
         mockWebServer.start();
         String url =  mockWebServer.url("/").toString();
 
-        categoeryQueryAdapter = new CategoeryQueryAdapter(httpClient(), url);
+        categoeryQueryAdapter = new CategoeryQueryAdapter(httpClient(), url, dummyToken);
     }
 
     @AfterEach

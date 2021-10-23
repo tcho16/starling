@@ -24,6 +24,7 @@ public class RoundUpCalculator
             BigDecimal divide = penceToNearestNextPound.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
             total = total.add(divide);;
         }
-        return total.doubleValue();
+
+        return total.multiply(new BigDecimal(100)).intValueExact();
     }
 }

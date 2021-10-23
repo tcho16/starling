@@ -16,7 +16,7 @@ class RoundUpCalculatorTest {
         double amount = roundUpCalculator.totalNearestPound(List.of(260));
 
         assertThat(amount).as("The rounded up amount to the next pound")
-                .isEqualTo(0.40);
+                .isEqualTo(40);
     }
 
     //TODO: Clarify assumption
@@ -26,7 +26,7 @@ class RoundUpCalculatorTest {
         double amount = roundUpCalculator.totalNearestPound(List.of(200));
 
         assertThat(amount).as("The rounded up amount to the next pound")
-                .isEqualTo(1.00);
+                .isEqualTo(100);
     }
 
     @Test
@@ -35,7 +35,7 @@ class RoundUpCalculatorTest {
         double amount = roundUpCalculator.totalNearestPound(List.of());
 
         assertThat(amount).as("The rounded up amount to the next pound")
-                .isEqualTo(0.00);
+                .isEqualTo(0);
     }
 
     @Test
@@ -44,7 +44,7 @@ class RoundUpCalculatorTest {
         double amount = roundUpCalculator.totalNearestPound(List.of(260,260,260));
 
         assertThat(amount).as("The rounded up amount to the next pound")
-                .isEqualTo(1.20);
+                .isEqualTo(120);
     }
 
     @Test
@@ -53,7 +53,7 @@ class RoundUpCalculatorTest {
         double amount = roundUpCalculator.totalNearestPound(List.of(87));
 
         assertThat(amount).as("The rounded up amount to the next pound")
-                .isEqualTo(0.13);
+                .isEqualTo(13);
     }
 
     @Test
@@ -62,7 +62,7 @@ class RoundUpCalculatorTest {
         double amount = roundUpCalculator.totalNearestPound(List.of(110));
 
         assertThat(amount).as("The rounded up amount to the next pound")
-                .isEqualTo(0.90);
+                .isEqualTo(90);
     }
 
     @Test
@@ -71,6 +71,6 @@ class RoundUpCalculatorTest {
         double amount = roundUpCalculator.totalNearestPound(List.of(435,520,87));
 
         assertThat(amount).as("The rounded up amount to the next pound")
-                .isEqualTo(1.58);
+                .isEqualTo(158);
     }
 }
