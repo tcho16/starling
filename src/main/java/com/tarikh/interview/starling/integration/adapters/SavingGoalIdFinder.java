@@ -1,5 +1,6 @@
 package com.tarikh.interview.starling.integration.adapters;
 
+import com.tarikh.interview.starling.integration.exceptions.UnableToRetreiveGoalsException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +23,7 @@ public class SavingGoalIdFinder{
     private final String starlingGoalUrl;
     private final OkHttpClient client;
 
-    public HashMap<String, String> getSavingGoals(String accountUid)
-    {
+    public HashMap<String, String> getSavingGoals(String accountUid) throws UnableToRetreiveGoalsException {
         HashMap<String, String> mapOfGoals = new HashMap<>();
 
         //Create the request
@@ -53,6 +53,7 @@ public class SavingGoalIdFinder{
         }catch(Exception e)
         {
             log.error("Error in fetching the list of goals", e);
+            throw new UnableToRetreiveGoalsException("Unable to retreive goals for account " + accountUid);
         }
 
         return mapOfGoals;

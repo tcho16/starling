@@ -44,6 +44,7 @@ class SavingGoalAdapterTest {
         mockWebServer.shutdown();
     }
 
+    @SneakyThrows
     @Test
     public void shouldCreateGoalIfGoalDoesNotAlreadyExists()
     {
@@ -61,6 +62,7 @@ class SavingGoalAdapterTest {
         verify(creator).createGoal(any(GoalContainer.class));
     }
 
+    @SneakyThrows
     @Test
     public void shouldNotNeedToCreateGoalIfGoalWithSameNameAlreadyExists()
     {
@@ -92,7 +94,6 @@ class SavingGoalAdapterTest {
         map.put("123", "Bobs goal");
         return map;
     }
-
 
     private OkHttpClient httpClient()
     {

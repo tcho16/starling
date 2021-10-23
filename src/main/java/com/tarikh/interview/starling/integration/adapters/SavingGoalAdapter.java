@@ -31,6 +31,7 @@ public class SavingGoalAdapter implements SavingGoalPort {
     private final SavingGoalCreator creator;
     private final SavingGoalIdFinder goalIdFinder;
 
+    @SneakyThrows
     @Override
     public void sendMoneyToGoal(GoalContainer goalContainer) {
         //Fetch Ids of the goals
@@ -104,8 +105,6 @@ public class SavingGoalAdapter implements SavingGoalPort {
                                 .minorUnits((int) goalContainer.getAmountToAdd())
                                 .build())
                 .build());
-        System.out.println("THIS IS THE REQUEST BODY ADDING MONEY TO GOAL");
-        System.out.println(requestBody);
         return RequestBody.create(requestBody, MediaType.parse("application/json"));
     }
 

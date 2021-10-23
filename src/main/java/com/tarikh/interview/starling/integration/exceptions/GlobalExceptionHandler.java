@@ -10,6 +10,15 @@ import java.util.Date;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler
+    public ResponseEntity<ErrorMessage> unableToRetrieveGoal(UnableToRetreiveGoalsException ex) {
+        ErrorMessage message = new ErrorMessage(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                new Date(),
+                "Was unable to retrieve goal for the user");
+
+        return new ResponseEntity<ErrorMessage>(message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     @ExceptionHandler(UnableToAddMoneyToGoalException.class)
     public ResponseEntity<ErrorMessage> unableToAddMoneyToGoal(UnableToAddMoneyToGoalException ex) {

@@ -3,6 +3,7 @@ package com.tarikh.interview.starling.integration.adapters;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tarikh.interview.starling.api.GoalDTO;
 import com.tarikh.interview.starling.domain.models.GoalContainer;
+import com.tarikh.interview.starling.integration.exceptions.UnableToCreateGoalException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,7 @@ public class SavingGoalCreator {
 
     //We create the goal and return a map of <String,String> where the K = ID of the goal and V = the goalName
     public Map<String, String> createGoal(GoalContainer goalContainer){
-        //Creating the request
+        //Creating the request to send
         Request request = new Request.Builder()
                 .url(buildPutGoalUrl(starlingGoalUrl, goalContainer.getAccUId()))
                 .put(buildRequestBodyForCreatingGoal(goalContainer.getNameOfGoal()))
@@ -37,7 +38,7 @@ public class SavingGoalCreator {
                 .header("Accept", "application/json")
                 .build();
 
-        //Create
+        //Call the starling endpoint to create the goal
         try {
             String response = client.newCall(request)
                     .execute()
@@ -47,12 +48,12 @@ public class SavingGoalCreator {
             JSONObject jsonObject = new JSONObject(response);
             return Map.of(jsonObject.getString("savingsGoalUid"), goalContainer.getNameOfGoal());
 
-        }catch(Exception e)
+        } catch (Exception e)
         {
-            log.error("Error in fetching the list of goals", e);
-            throw new RuntimeException("Error in fetching goals");
+            log.error("Error in creating new goal for user", e);
+            throw new UnableToCreateGoalException("Error in creating goal for account" + goalContainer.getAccUId());
         }
-    };
+    }
 
     @SneakyThrows
     private RequestBody buildRequestBodyForCreatingGoal(String goalName) {

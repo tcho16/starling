@@ -24,9 +24,11 @@ C:\Users\Admin\Desktop\starling\starling\src\main\java\com\tarikh\interview\star
 C:\Users\Admin\Desktop\starling\starling\src\main\java\com\tarikh\interview\starling\integration\exceptions\UnableToAddMoneyToGoalException.java
 C:\Users\Admin\Desktop\starling\starling\src\main\java\com\tarikh\interview\starling\integration\exceptions\ErrorMessage.java
 C:\Users\Admin\Desktop\starling\starling\src\main\java\com\tarikh\interview\starling\integration\adapters\SavingGoalIdFinder.java
+C:\Users\Admin\Desktop\starling\starling\src\main\java\com\tarikh\interview\starling\integration\exceptions\UnableToCreateGoalException.java
 C:\Users\Admin\Desktop\starling\starling\src\main\java\com\tarikh\interview\starling\api\Amount.java
 C:\Users\Admin\Desktop\starling\starling\src\main\java\com\tarikh\interview\starling\integration\exceptions\GlobalExceptionHandler.java
 C:\Users\Admin\Desktop\starling\starling\src\main\java\com\tarikh\interview\starling\integration\controllers\RoundUpController.java
+C:\Users\Admin\Desktop\starling\starling\src\main\java\com\tarikh\interview\starling\integration\exceptions\UnableToRetreiveGoalsException.java
 C:\Users\Admin\Desktop\starling\starling\src\main\java\com\tarikh\interview\starling\StarlingApplication.java
 C:\Users\Admin\Desktop\starling\starling\src\main\java\com\tarikh\interview\starling\domain\models\GoalTimeframe.java
 C:\Users\Admin\Desktop\starling\starling\src\main\java\com\tarikh\interview\starling\api\AccountDTO.java

@@ -8,6 +8,7 @@ com\tarikh\interview\starling\domain\models\AccountDetails$AccountDetailsBuilder
 com\tarikh\interview\starling\integration\adapters\SavingGoalIdFinder.class
 com\tarikh\interview\starling\domain\models\AccountDetails.class
 com\tarikh\interview\starling\integration\exceptions\NoPrimaryAccountsWereFoundException.class
+com\tarikh\interview\starling\integration\exceptions\UnableToRetreiveGoalsException.class
 com\tarikh\interview\starling\integration\adapters\AccountIdQueryAdapter.class
 com\tarikh\interview\starling\domain\TransactionQueryPort.class
 com\tarikh\interview\starling\StarlingApplication.class
@@ -33,6 +34,7 @@ com\tarikh\interview\starling\domain\AccountIdQueryPort.class
 com\tarikh\interview\starling\api\Amount.class
 com\tarikh\interview\starling\integration\adapters\TransactionQueryAdapter.class
 com\tarikh\interview\starling\domain\handlers\RoundUpCalculator.class
+com\tarikh\interview\starling\integration\exceptions\UnableToCreateGoalException.class
 com\tarikh\interview\starling\api\AccountDTO.class
 com\tarikh\interview\starling\integration\adapters\SavingGoalCreator.class
 com\tarikh\interview\starling\domain\handlers\PublishRoundUpHandler.class

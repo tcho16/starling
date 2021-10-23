@@ -39,13 +39,13 @@ public class PublishRoundUpHandler implements PublishRoundUpPort
       //Building a domain object so we can use it in the adapters
       TransactionTimeFrame transactionTimeFrame = buildTransactionTimeFrame(accountDetails, goalTimeframe.getTimestampBegin());
 
-      //Fetch transactions from between date
+      //Fetch transactions from between dates
       List<Integer> integers = transactionQueryPort.queryTransactionAmountsBasedOnTimeframe(transactionTimeFrame);
 
       //Calculating the nearest rounded amount to insert into goal
       double totalSavedUpFromTransactions = roundUpCalculator.totalNearestPound(integers);
 
-      //Create a goalContainer to be used in the adapters
+      //Create a goalContainer object to be used in the adapters
       GoalContainer goalContainer = buildGoalUpdater(totalSavedUpFromTransactions, accountDetails.getAccountUId(), goalTimeframe.getGoalName());
 
       //Call the saving goal adapter to persist what we have done
