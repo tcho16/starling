@@ -15,6 +15,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URL;
 import java.util.HashMap;
 
+
+//This adapter is responsible for fetching the goals associated by the user.
+//It then returns a Map<String, String> where the key is the goal ID and the value is the name of the goal.
 @Component
 @Slf4j
 @RequiredArgsConstructor

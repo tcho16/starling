@@ -20,6 +20,11 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Optional;
 
+//This adapter is responsible for fetching the accountID and categoryId based on a PRIMARY account.
+//If no primary account is present then an exception is thrown which is caught by the global exception handler
+//Since this is the first API call to Starling's API, we ensure that the response code is not FORBIDDEN,
+//if it is FORBIDDEN then we throw a custom exception.
+
 @Component
 @Slf4j
 @RequiredArgsConstructor

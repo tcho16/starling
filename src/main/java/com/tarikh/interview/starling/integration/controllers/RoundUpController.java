@@ -33,7 +33,7 @@ public class RoundUpController
    public ResponseDTO postTransactions(@NonNull @PathVariable String accHolderUId,
                                        @NonNull @RequestBody GoalTimeframeDTO goalTimeframeDTO)
    {
-      log.info("postTransactions:+ received request={}", goalTimeframeDTO);
+      log.info("postTransactions:+ received request={} for accHolderId={}", goalTimeframeDTO, accHolderUId);
       GoalTimeframe goalTimeframe = converter.convert(accHolderUId, goalTimeframeDTO);
 
       String messageOfPublishingToGoal = roundUpHandler.publishToGoal(goalTimeframe);

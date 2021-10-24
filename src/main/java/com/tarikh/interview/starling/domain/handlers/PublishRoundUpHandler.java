@@ -16,6 +16,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//This is the class that orchestrates the calls to make the logic happen
+//It has collaborators injected such as the Ports and Converters
+//It first fetches the IDs of the primary account
+//Then fetches the transaction
+//Then performs the business logic in computing the rounded value
+//Then the fetches the ID of the goal
+//It then persists the rounded value to the goal.
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -37,7 +45,8 @@ public class PublishRoundUpHandler implements PublishRoundUpPort {
         //Fetch the categoryId and accountId for the given accountHolderUId
         AccountDetails accountDetails = accountIdQueryPort.fetchAccountIds(goalTimeframe.getAccountHolderId());
 
-        //Building a domain object so we can use it in the adapters
+        //Building a domain object so we can use it in the adapters.
+        //This is to make the boundaries loosely coupled/anti corruption layer.
         TransactionTimeFrame transactionTimeFrame = timeFrameConverter.convertToTransactionTimeFrame(accountDetails, goalTimeframe.getTimestampBegin());
 
         //Fetch transactions from between dates
@@ -49,7 +58,8 @@ public class PublishRoundUpHandler implements PublishRoundUpPort {
         //Fetch the IDs of the saving goal
         String savingGoalID = getSavingGoalId(accountDetails.getAccountUId(), goalTimeframe.getGoalName());
 
-        //Create a goalContainer object to be used in the saving adapter adapters
+        //Create a goalContainer object to be used in the saving goal adapters
+        //This is for ensure the domain/integration is losely coupled.
         GoalContainer goalContainer = goalContainerConverter.convert(totalSavedUpFromTransactions,
                 accountDetails.getAccountUId(),
                 goalTimeframe.getGoalName(),
@@ -66,6 +76,9 @@ public class PublishRoundUpHandler implements PublishRoundUpPort {
         }
     }
 
+    //This method gets the ID of the saving goal the user wants to deposit into
+    //If the goal does not exist then it creates it and then returns the ID of the newly created goal
+    //Else it returns the ID of the existing goal
     @SneakyThrows
     private String getSavingGoalId(String accountUId, String goalName) {
         HashMap<String, String> mapOfCurrentGoals = savingGoalIdPort.getIdsOfSavingGoals(accountUId);

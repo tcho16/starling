@@ -23,7 +23,7 @@ public class TimestampDTOToTimestampDurationConverter
 
    public GoalTimeframe convert(String accountHolderId, GoalTimeframeDTO dto)
    {
-      log.info("convert:+ building the object using timestamp for accountHolderId={}", dto.getTimestamp(), accountHolderId);
+      log.info("convert:+ converting to goalTimeframe from dto={}", dto);
 
       validate(dto);
 
@@ -32,10 +32,12 @@ public class TimestampDTOToTimestampDurationConverter
                                                   .goalName(dto.getSavingGoalName())
                                                   .timestampBegin(formatTimestamp(dto.getTimestamp()))
                                                   .build();
-      log.info("convert:- built object={}", goalTimeframe);
+      log.info("convert:- built goaltimeframe={}", goalTimeframe);
       return goalTimeframe;
    }
 
+   //This is the validation we perform. We throw a custom exception which will be dealt with the
+   //GlobalExcceptionHandler class
    private void validate(GoalTimeframeDTO dto) {
       if(null == dto.getSavingGoalName() || dto.getSavingGoalName().isEmpty())
       {

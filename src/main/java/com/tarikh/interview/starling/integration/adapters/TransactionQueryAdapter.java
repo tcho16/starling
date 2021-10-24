@@ -17,6 +17,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+//This is the Transaction adapter.
+//We fetch the list of transactions based on the timestamps.
+//If no transactions are recorded, then we throw an exception indicating that no transactions were found
+
 @Component
 @Slf4j
 @RequiredArgsConstructor
