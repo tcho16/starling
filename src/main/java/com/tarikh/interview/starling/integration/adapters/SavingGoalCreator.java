@@ -28,11 +28,11 @@ public class SavingGoalCreator {
     private final OkHttpClient client;
 
     //We create the goal and return a map of <String,String> where the K = ID of the goal and V = the goalName
-    public Map<String, String> createGoal(GoalContainer goalContainer){
+    public Map<String, String> createGoal(String accUId, String nameOfGoal){// GoalContainer goalContainer){
         //Creating the request to send
         Request request = new Request.Builder()
-                .url(buildPutGoalUrl(starlingGoalUrl, goalContainer.getAccUId()))
-                .put(buildRequestBodyForCreatingGoal(goalContainer.getNameOfGoal()))
+                .url(buildPutGoalUrl(starlingGoalUrl, accUId))
+                .put(buildRequestBodyForCreatingGoal(nameOfGoal))
                 .header("Authorization",
                         "Bearer " + accessToken)
                 .header("Accept", "application/json")
@@ -46,12 +46,12 @@ public class SavingGoalCreator {
                     .string();
 
             JSONObject jsonObject = new JSONObject(response);
-            return Map.of(jsonObject.getString("savingsGoalUid"), goalContainer.getNameOfGoal());
+            return Map.of(jsonObject.getString("savingsGoalUid"), nameOfGoal);
 
         } catch (Exception e)
         {
             log.error("Error in creating new goal for user", e);
-            throw new UnableToCreateGoalException("Error in creating goal for account" + goalContainer.getAccUId());
+            throw new UnableToCreateGoalException("Error in creating goal for account" + accUId);
         }
     }
 

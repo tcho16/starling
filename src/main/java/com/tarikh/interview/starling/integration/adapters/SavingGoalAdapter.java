@@ -28,72 +28,38 @@ public class SavingGoalAdapter implements SavingGoalPort {
     private final String accessToken;
     private final String starlingGoalAddMoneyUrl;
     private final OkHttpClient client;
-    private final SavingGoalCreator creator;
-    private final SavingGoalIdFinder goalIdFinder;
 
     @SneakyThrows
     @Override
     public void sendMoneyToGoal(GoalContainer goalContainer) {
-        //Fetch Ids of the goals
-        HashMap<String, String> savingGoals = goalIdFinder.getSavingGoals(goalContainer.getAccUId());
-
-        if(savingGoalDoesNotExist(goalContainer.getNameOfGoal(), savingGoals))
-        {
-            Map<String, String> goal = creator.createGoal(goalContainer);
-            goal.entrySet().iterator()
-                            .forEachRemaining(newlyCreatedGoal -> savingGoals.put(newlyCreatedGoal.getKey(), newlyCreatedGoal.getValue()));
-        }
-
-        String idOfGoal = fetchGoalId(savingGoals, goalContainer.getNameOfGoal());
-        sendMoney(goalContainer, idOfGoal);
+        sendMoney(goalContainer);
     }
 
-    private String fetchGoalId(HashMap<String, String> savingGoals, String nameOfGoal) {
-        String idOfGoal = "";
-        for (Map.Entry<String, String> goal : savingGoals.entrySet()) {
-            if(goal.getValue().equalsIgnoreCase(nameOfGoal))
-            {
-                idOfGoal =  goal.getKey();
-                break;
-            }
-        }
-
-        return idOfGoal;
-    }
-
-    private void sendMoney(GoalContainer goalContainer, String idOfGoal) {
-        Request request = new Request.Builder()
-                .url(addMoneyUrl(starlingGoalAddMoneyUrl, goalContainer, idOfGoal))
-                .put(buildRequestBodyForAddingMoneyToGoal(goalContainer))
-                .header("Authorization",
-                        "Bearer " + accessToken)
-                .header("Accept", "application/json")
-                .build();
-
+    private void sendMoney(GoalContainer goalContainer)
+    {
         try {
-            client.newCall(request)
-                    .execute()
-                    .body()
-                    .string();
+            Request request = new Request.Builder()
+                    .url(addMoneyUrl(starlingGoalAddMoneyUrl, goalContainer, goalContainer.getGoalId()))
+                    .put(buildRequestBodyForAddingMoneyToGoal(goalContainer))
+                    .header("Authorization",
+                            "Bearer " + accessToken)
+                    .header("Accept", "application/json")
+                    .build();
 
+            int returnResponseCode = client.newCall(request)
+                                            .execute()
+                                            .networkResponse()
+                                            .code();
+
+            if(returnResponseCode != 200)
+            {
+                throw new UnableToAddMoneyToGoalException("Was not able to add money to the goal");
+            }
         }catch(Exception e)
         {
             log.error("Error in adding money to the goal", e);
             throw new UnableToAddMoneyToGoalException("Was not able to add money to the goal");
         }
-    }
-
-    private boolean savingGoalDoesNotExist(String goalName, HashMap<String, String> listOfSavingGoals) {
-        boolean doesNotExist = true;
-
-        for (Map.Entry<String, String> stringStringEntry : listOfSavingGoals.entrySet()) {
-            if(stringStringEntry.getValue().equalsIgnoreCase(goalName))
-            {
-                doesNotExist = false;
-                break;
-            }
-        }
-        return doesNotExist;
     }
 
     @SneakyThrows
