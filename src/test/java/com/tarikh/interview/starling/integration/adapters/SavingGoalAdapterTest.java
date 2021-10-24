@@ -16,8 +16,6 @@ import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class SavingGoalAdapterTest {
@@ -93,7 +91,7 @@ class SavingGoalAdapterTest {
     private GoalContainer createGoalContainer(String nameOfGoal) {
         return GoalContainer.builder()
                 .accUId(accId)
-                .amountToAdd(123.1)
+                .amountToAdd(123)
                 .nameOfGoal(nameOfGoal)
                 .build();
     }

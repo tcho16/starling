@@ -13,7 +13,7 @@ import java.util.List;
 @Slf4j
 public class RoundUpCalculator
 {
-    public double totalNearestPound(List<Integer> transactions)
+    public int totalNearestPound(List<Integer> transactions)
     {
         BigDecimal total = new BigDecimal(0.00);
 

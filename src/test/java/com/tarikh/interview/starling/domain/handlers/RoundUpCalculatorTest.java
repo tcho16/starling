@@ -13,7 +13,7 @@ class RoundUpCalculatorTest {
     @Test
     public void shouldReturnCorrectAmount()
     {
-        double amount = roundUpCalculator.totalNearestPound(List.of(260));
+        int amount = roundUpCalculator.totalNearestPound(List.of(260));
 
         assertThat(amount).as("The rounded up amount to the next pound")
                 .isEqualTo(40);
@@ -23,7 +23,7 @@ class RoundUpCalculatorTest {
     @Test
     public void shouldReturnOneIfExactlySpentAPound()
     {
-        double amount = roundUpCalculator.totalNearestPound(List.of(200));
+        int amount = roundUpCalculator.totalNearestPound(List.of(200));
 
         assertThat(amount).as("The rounded up amount to the next pound")
                 .isEqualTo(100);
@@ -32,7 +32,7 @@ class RoundUpCalculatorTest {
     @Test
     public void shouldReturnZeroIfNoTransactions()
     {
-        double amount = roundUpCalculator.totalNearestPound(List.of());
+        int amount = roundUpCalculator.totalNearestPound(List.of());
 
         assertThat(amount).as("The rounded up amount to the next pound")
                 .isEqualTo(0);
@@ -41,7 +41,7 @@ class RoundUpCalculatorTest {
     @Test
     public void shouldReturnCorrectAmountFromMultipleTransactions()
     {
-        double amount = roundUpCalculator.totalNearestPound(List.of(260,260,260));
+        int amount = roundUpCalculator.totalNearestPound(List.of(260,260,260));
 
         assertThat(amount).as("The rounded up amount to the next pound")
                 .isEqualTo(120);
@@ -50,7 +50,7 @@ class RoundUpCalculatorTest {
     @Test
     public void shouldReturnCorrectAmountIfPenceIsPassedIn()
     {
-        double amount = roundUpCalculator.totalNearestPound(List.of(87));
+        int amount = roundUpCalculator.totalNearestPound(List.of(87));
 
         assertThat(amount).as("The rounded up amount to the next pound")
                 .isEqualTo(13);
@@ -59,7 +59,7 @@ class RoundUpCalculatorTest {
     @Test
     public void shouldReturnCorrectAmountIfInLowerSideOfPound()
     {
-        double amount = roundUpCalculator.totalNearestPound(List.of(110));
+        int amount = roundUpCalculator.totalNearestPound(List.of(110));
 
         assertThat(amount).as("The rounded up amount to the next pound")
                 .isEqualTo(90);
@@ -68,7 +68,7 @@ class RoundUpCalculatorTest {
     @Test
     public void shouldReturnCorrectAmountBasedOnMixedNumbers()
     {
-        double amount = roundUpCalculator.totalNearestPound(List.of(435,520,87));
+        int amount = roundUpCalculator.totalNearestPound(List.of(435,520,87));
 
         assertThat(amount).as("The rounded up amount to the next pound")
                 .isEqualTo(158);

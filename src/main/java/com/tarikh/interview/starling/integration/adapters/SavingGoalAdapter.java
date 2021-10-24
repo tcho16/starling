@@ -72,7 +72,7 @@ public class SavingGoalAdapter implements SavingGoalPort {
         String requestBody = objectMapper.writeValueAsString(AmountDTO.builder()
                 .amount(Amount.builder()
                                 .currency("GBP")
-                                .minorUnits((int) goalContainer.getAmountToAdd())
+                                .minorUnits(goalContainer.getAmountToAdd())
                                 .build())
                 .build());
         return RequestBody.create(requestBody, MediaType.parse("application/json"));

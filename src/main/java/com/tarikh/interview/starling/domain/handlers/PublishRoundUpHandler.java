@@ -49,8 +49,7 @@ public class PublishRoundUpHandler implements PublishRoundUpPort {
         List<Integer> transactions = transactionQueryPort.queryTransactionAmountsBasedOnTimeframe(transactionTimeFrame);
 
         //Calculating the nearest rounded amount to insert into goal
-        double totalSavedUpFromTransactions = roundUpCalculator.totalNearestPound(transactions);
-        System.out.println("the rounded up total = " + totalSavedUpFromTransactions);
+        int totalSavedUpFromTransactions = roundUpCalculator.totalNearestPound(transactions);
 
         //Fetch the IDs of the saving goal
         String savingGoalID = getSavingGoalId(accountDetails.getAccountUId(), goalTimeframe.getGoalName());

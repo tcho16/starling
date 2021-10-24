@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GoalContainerConverter {
 
-    public GoalContainer convert(double totalSavedUpFromTransactions, String accountId, String goalName, String goalID) {
+    public GoalContainer convert(int totalSavedUpFromTransactions, String accountId, String goalName, String goalID) {
         return GoalContainer.builder()
                 .goalId(goalID)
                 .accUId(accountId)
