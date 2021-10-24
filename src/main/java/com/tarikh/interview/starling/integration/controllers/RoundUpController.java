@@ -1,7 +1,6 @@
 package com.tarikh.interview.starling.integration.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,14 +29,13 @@ public class RoundUpController
    }
 
    @PostMapping("account/{accHolderUId}/saving-goals/transactions/roundup")
-   public void postTransactions(@NonNull @PathVariable String accHolderUId,
-                                @NonNull @RequestBody GoalTimeframeDTO goalTimeframeDTO)
+   public String postTransactions(@NonNull @PathVariable String accHolderUId,
+                                  @NonNull @RequestBody GoalTimeframeDTO goalTimeframeDTO)
    {
       log.info("postTransactions:+ received request={}", goalTimeframeDTO);
       GoalTimeframe goalTimeframe = converter.convert(accHolderUId, goalTimeframeDTO);
 
-      roundUpHandler.publishToGoal(goalTimeframe);
-
       log.info("postTransactions:-");
+      return roundUpHandler.publishToGoal(goalTimeframe);
    }
 }

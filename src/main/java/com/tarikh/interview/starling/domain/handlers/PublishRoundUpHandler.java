@@ -17,12 +17,9 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static java.time.temporal.ChronoUnit.DAYS;
 
 @Component
 @RequiredArgsConstructor
@@ -39,7 +36,7 @@ public class PublishRoundUpHandler implements PublishRoundUpPort {
 
     @SneakyThrows
     @Override
-    public void publishToGoal(GoalTimeframe goalTimeframe) {
+    public String publishToGoal(GoalTimeframe goalTimeframe) {
         log.info("publishToGoal:+ goal={}", goalTimeframe);
 
         //Fetch the categoryId and accountId for the given accountHolderUId
@@ -60,13 +57,19 @@ public class PublishRoundUpHandler implements PublishRoundUpPort {
 
         //Create a goalContainer object to be used in the saving adapter adapters
         GoalContainer goalContainer = goalContainerConverter.convert(totalSavedUpFromTransactions,
-                                                                    accountDetails.getAccountUId(),
-                                                                    goalTimeframe.getGoalName(),
-                                                                    savingGoalID);
+                accountDetails.getAccountUId(),
+                goalTimeframe.getGoalName(),
+                savingGoalID);
 
         //Call the saving goal adapter to persist the amount
-        savingGoalPort.sendMoneyToGoal(goalContainer);
-        log.info("publishToGoal:- goal has been updated with rounded amount.");
+        boolean isSuccessful = savingGoalPort.sendMoneyToGoal(goalContainer);
+
+        log.info("publishToGoal:-");
+        if (isSuccessful) {
+            return "Successfuly sent rounded figure of " + goalContainer.getAmountToAdd() + " to goal: " + goalContainer.getNameOfGoal();
+        } else {
+            return "Did not send money to goal: " + goalContainer.getNameOfGoal();
+        }
     }
 
     @SneakyThrows

@@ -10,7 +10,7 @@ import java.util.Date;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler
+    @ExceptionHandler(UnableToRetreiveGoalsException.class)
     public ResponseEntity<ErrorMessage> unableToRetrieveGoal(UnableToRetreiveGoalsException ex) {
         ErrorMessage message = new ErrorMessage(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UnableToRetrieveTransactionException.class)
-    public ResponseEntity<ErrorMessage> unableToRetrieveTransactions(NoPrimaryAccountsWereFoundException ex) {
+    public ResponseEntity<ErrorMessage> unableToRetrieveTransactions(UnableToRetrieveTransactionException ex) {
         ErrorMessage message = new ErrorMessage(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 new Date(),

@@ -4,5 +4,5 @@ import com.tarikh.interview.starling.domain.models.GoalContainer;
 
 public interface SavingGoalPort {
 
-    void sendMoneyToGoal(GoalContainer goalContainer);
+    boolean sendMoneyToGoal(GoalContainer goalContainer);
 }

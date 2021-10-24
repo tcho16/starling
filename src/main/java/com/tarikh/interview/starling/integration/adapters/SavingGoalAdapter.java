@@ -28,14 +28,16 @@ public class SavingGoalAdapter implements SavingGoalPort {
     private final String accessToken;
     private final String starlingGoalAddMoneyUrl;
     private final OkHttpClient client;
+    private boolean unsuccessfulDepositToGoal = false;
+    private boolean successfulDepositToGoal = true;
 
     @SneakyThrows
     @Override
-    public void sendMoneyToGoal(GoalContainer goalContainer) {
-        sendMoney(goalContainer);
+    public boolean sendMoneyToGoal(GoalContainer goalContainer) {
+        return sendMoney(goalContainer);
     }
 
-    private void sendMoney(GoalContainer goalContainer)
+    private boolean sendMoney(GoalContainer goalContainer)
     {
         try {
             Request request = new Request.Builder()
@@ -53,8 +55,10 @@ public class SavingGoalAdapter implements SavingGoalPort {
 
             if(returnResponseCode != 200)
             {
-                throw new UnableToAddMoneyToGoalException("Was not able to add money to the goal");
+                return unsuccessfulDepositToGoal;
             }
+
+            return successfulDepositToGoal;
         }catch(Exception e)
         {
             log.error("Error in adding money to the goal", e);
