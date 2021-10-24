@@ -43,4 +43,14 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(AccessTokenExpiredException.class)
+    public ResponseEntity<ErrorDTO> accessTokenHasExpired(AccessTokenExpiredException ex)
+    {
+        ErrorDTO message = new ErrorDTO(
+                ex.getMessage(),
+                HttpStatus.FORBIDDEN);
+
+        return new ResponseEntity<>(message, HttpStatus.FORBIDDEN);
+    }
 }
