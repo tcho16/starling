@@ -11,6 +11,7 @@
 	<groupId>com.tarikh.interview</groupId>
 	<artifactId>starling</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>starling</name>
 	<description>Interview project for Spring Boot</description>
 	<properties>

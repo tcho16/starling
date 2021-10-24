@@ -19,7 +19,6 @@ class RoundUpCalculatorTest {
                 .isEqualTo(40);
     }
 
-    //TODO: Clarify assumption
     @Test
     public void shouldReturnOneIfExactlySpentAPound()
     {

@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.time.format.DateTimeParseException;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -52,5 +54,25 @@ public class GlobalExceptionHandler {
                 HttpStatus.FORBIDDEN);
 
         return new ResponseEntity<>(message, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(BadException.class)
+    public ResponseEntity<ErrorDTO> errorWithBadRequest(BadException ex)
+    {
+        ErrorDTO message = new ErrorDTO(
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DateTimeParseException.class)
+    public ResponseEntity<ErrorDTO> errorParsingTheDate(DateTimeParseException ex)
+    {
+        ErrorDTO message = new ErrorDTO(
+                ex.getMessage() + ". Ensure you provide the date + time in the format 2021-10-18 21:46:07",
+                HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 }

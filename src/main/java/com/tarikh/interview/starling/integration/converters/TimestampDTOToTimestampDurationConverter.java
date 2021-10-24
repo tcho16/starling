@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
+import com.tarikh.interview.starling.integration.exceptions.BadException;
 import org.springframework.stereotype.Component;
 
 import com.tarikh.interview.starling.api.GoalTimeframeDTO;
@@ -11,6 +12,7 @@ import com.tarikh.interview.starling.domain.models.AccountDetails;
 import com.tarikh.interview.starling.domain.models.GoalTimeframe;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.client.HttpClientErrorException;
 
 //This converter converts the given timestamp to a timestamp duration domain specific object which consists of a week in advance.
 
@@ -23,6 +25,8 @@ public class TimestampDTOToTimestampDurationConverter
    {
       log.info("convert:+ building the object using timestamp for accountHolderId={}", dto.getTimestamp(), accountHolderId);
 
+      validate(dto);
+
       GoalTimeframe goalTimeframe = GoalTimeframe.builder()
                                                   .accountHolderId(accountHolderId)
                                                   .goalName(dto.getSavingGoalName())
@@ -30,6 +34,18 @@ public class TimestampDTOToTimestampDurationConverter
                                                   .build();
       log.info("convert:- built object={}", goalTimeframe);
       return goalTimeframe;
+   }
+
+   private void validate(GoalTimeframeDTO dto) {
+      if(null == dto.getSavingGoalName() || dto.getSavingGoalName().isEmpty())
+      {
+         throw new BadException("Goal name must be present");
+      }
+
+      if (null == dto.getTimestamp() || dto.getTimestamp().isEmpty())
+      {
+         throw new BadException("Timestamp must be present");
+      }
    }
 
    private Instant formatTimestamp(String timestamp)
