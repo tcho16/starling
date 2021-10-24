@@ -45,17 +45,19 @@ public class TransactionQueryAdapter implements TransactionQueryPort {
             JSONObject jsonObject = new JSONObject(response);
             JSONArray feedItems = jsonObject.getJSONArray("feedItems");
 
-            for(int i = 0; i < feedItems.length(); i++)
-            {
+            for (int i = 0; i < feedItems.length(); i++) {
                 Integer amount = feedItems.getJSONObject(i).getJSONObject("amount").getInt("minorUnits");
                 transactions.add(amount);
             }
-
-           return transactions;
-
         } catch (Exception e) {
             throw new UnableToRetrieveTransactionException("Error retrieving transaction for accountId=" + timeFrame.getAccountId());
         }
+
+        if (transactions.size() == 0) {
+            throw new UnableToRetrieveTransactionException("No transactions were found from the provided date");
+        }
+
+        return transactions;
     }
 
     private Request buildRequest(TransactionTimeFrame timeFrame) {

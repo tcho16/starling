@@ -5,48 +5,42 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.Date;
-
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnableToRetreiveGoalsException.class)
-    public ResponseEntity<ErrorMessage> unableToRetrieveGoal(UnableToRetreiveGoalsException ex) {
-        ErrorMessage message = new ErrorMessage(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                new Date(),
-                "Was unable to retrieve goal for the user");
+    public ResponseEntity<ErrorDTO> unableToRetrieveGoal(UnableToRetreiveGoalsException ex) {
+        ErrorDTO message = new ErrorDTO(
+                ex.getMessage(),
+                HttpStatus.INTERNAL_SERVER_ERROR);
 
-        return new ResponseEntity<ErrorMessage>(message, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<ErrorDTO>(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(UnableToAddMoneyToGoalException.class)
-    public ResponseEntity<ErrorMessage> unableToAddMoneyToGoal(UnableToAddMoneyToGoalException ex) {
-        ErrorMessage message = new ErrorMessage(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                new Date(),
-                "Was unable to deposit money to goal for the user");
+    public ResponseEntity<ErrorDTO> unableToAddMoneyToGoal(UnableToAddMoneyToGoalException ex) {
+        ErrorDTO message = new ErrorDTO(
+                ex.getMessage(),
+                HttpStatus.INTERNAL_SERVER_ERROR);
 
-        return new ResponseEntity<ErrorMessage>(message, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<ErrorDTO>(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(NoPrimaryAccountsWereFoundException.class)
-    public ResponseEntity<ErrorMessage> resourceNotFoundException(NoPrimaryAccountsWereFoundException ex) {
-        ErrorMessage message = new ErrorMessage(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                new Date(),
-                "No primary accounts were found for the provided accountHolderId");
+    public ResponseEntity<ErrorDTO> resourceNotFoundException(NoPrimaryAccountsWereFoundException ex) {
+        ErrorDTO message = new ErrorDTO(
+                ex.getMessage(),
+                HttpStatus.NOT_FOUND);
 
-        return new ResponseEntity<ErrorMessage>(message, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<ErrorDTO>(message, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(UnableToRetrieveTransactionException.class)
-    public ResponseEntity<ErrorMessage> unableToRetrieveTransactions(UnableToRetrieveTransactionException ex) {
-        ErrorMessage message = new ErrorMessage(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                new Date(),
-                "Was unable to retrieve the transaction for the user");
+    public ResponseEntity<ErrorDTO> unableToRetrieveTransactions(UnableToRetrieveTransactionException ex) {
+        ErrorDTO message = new ErrorDTO(
+                ex.getMessage(),
+                HttpStatus.NOT_FOUND);
 
-        return new ResponseEntity<ErrorMessage>(message, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
 }

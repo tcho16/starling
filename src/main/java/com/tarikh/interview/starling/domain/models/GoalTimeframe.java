@@ -15,9 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @Data
 public class GoalTimeframe
 {
-   //private AccountDetails accountDetails;
    private String goalName;
    private String accountHolderId;
    private Instant timestampBegin;
-   //private Instant timestampEnd;
 }

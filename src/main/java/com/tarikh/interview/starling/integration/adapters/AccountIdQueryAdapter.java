@@ -18,6 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
+import java.util.Optional;
+import java.util.function.Supplier;
+
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -33,8 +36,6 @@ public class AccountIdQueryAdapter implements AccountIdQueryPort {
     @Override
     public AccountDetails fetchAccountIds(String accountHolderUid) {
         log.info("queryCategoryPort:+ fetching accounts for accountHolderUid={}", accountHolderUid);
-
-        //TODO: Extract request
 
         Request request = new Request.Builder()
                 .url(starlingAccountUrl)
@@ -54,14 +55,16 @@ public class AccountIdQueryAdapter implements AccountIdQueryPort {
             JSONArray savingsGoalList = jsonObject.getJSONArray("accounts");
 
             AccountsDTO accountsDTO = mapper.readValue(response, AccountsDTO.class);
-            AccountDTO IdsOfAccounts = accountsDTO.getAccountDTOList()
+            Optional<AccountDTO> idOfPrimaryAccount = accountsDTO.getAccountDTOList()
                                                                 .stream()
                                                                 .filter(accountDTO -> accountDTO.accountType.equalsIgnoreCase(accountType))
-                                                                .findFirst()
-                    .orElseThrow(NoPrimaryAccountsWereFoundException::new);
+                                                                .findFirst();
 
-            log.info("queryCategoryPort:- fetched accountIDs={}", IdsOfAccounts);
-            return dtoToAccountDetailsConverter.convert(IdsOfAccounts);
+        AccountDTO accountDTO = idOfPrimaryAccount.orElseThrow((Supplier<Throwable>) () ->
+                new NoPrimaryAccountsWereFoundException("No Primary account was found for the accountHolderUid = " + accountHolderUid));
+
+        log.info("queryCategoryPort:- fetched accountIDs={}", idOfPrimaryAccount);
+            return dtoToAccountDetailsConverter.convert(accountDTO);
 
     }
 }

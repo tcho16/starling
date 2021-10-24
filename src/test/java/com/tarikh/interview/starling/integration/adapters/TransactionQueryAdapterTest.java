@@ -43,17 +43,16 @@ class TransactionQueryAdapterTest {
     }
 
     @Test
-    public void shouldNotThrowErrorIfTransactionResponseIsEmpty() throws UnableToRetrieveTransactionException {
+    public void shouldThrowErrorIfTransactionResponseIsEmpty() throws UnableToRetrieveTransactionException {
         MockResponse mockedResponse = new MockResponse()
                 .setBody(emptyTransaction())
                 .addHeader("Content-Type", "application/json");
 
         mockWebServer.enqueue(mockedResponse);
 
-        List<Integer> integers = transactionQueryAdapter.queryTransactionAmountsBasedOnTimeframe(buildTransactionTimeframe());
-
-        assertThat(integers).as("The list containing the transactions")
-                .isEmpty();
+        assertThrows(UnableToRetrieveTransactionException.class,()->{
+            transactionQueryAdapter.queryTransactionAmountsBasedOnTimeframe(buildTransactionTimeframe());
+        });
     }
 
     @Test

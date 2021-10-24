@@ -1,7 +1,0 @@
-com\tarikh\interview\starling\StarlingApplicationTests.class
-com\tarikh\interview\starling\domain\handlers\RoundUpCalculatorTest.class
-com\tarikh\interview\starling\integration\adapters\AccountIdQueryAdapterTest.class
-com\tarikh\interview\starling\integration\adapters\TransactionQueryAdapterTest.class
-com\tarikh\interview\starling\integration\adapters\SavingGoalAdapterTest.class
-com\tarikh\interview\starling\integration\adapters\SavingGoalCreatorTest.class
-com\tarikh\interview\starling\integration\adapters\SavingGoalIdFinderTest.class
