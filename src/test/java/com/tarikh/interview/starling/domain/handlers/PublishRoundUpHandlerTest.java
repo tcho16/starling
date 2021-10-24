@@ -65,10 +65,9 @@ class PublishRoundUpHandlerTest {
 
         when(savingGoalPort.sendMoneyToGoal(any(GoalContainer.class))).thenReturn(true);
 
-        String responseMessage = publishRoundUpHandler.publishToGoal(createGoalTimeframe(goalName));
-        assertThat(responseMessage).as("The response of the saving to the goal")
-                                    .isNotEmpty()
-                                    .contains("Successfuly sent rounded figure");
+        boolean response = publishRoundUpHandler.publishToGoal(createGoalTimeframe(goalName));
+        assertThat(response).as("The response of the saving to the goal")
+                            .isTrue();
     }
 
     @Test
@@ -83,10 +82,9 @@ class PublishRoundUpHandlerTest {
 
         when(savingGoalPort.sendMoneyToGoal(any(GoalContainer.class))).thenReturn(true);
 
-        String responseMessage = publishRoundUpHandler.publishToGoal(createGoalTimeframe("brand new goal"));
+        boolean responseMessage = publishRoundUpHandler.publishToGoal(createGoalTimeframe("brand new goal"));
         assertThat(responseMessage).as("The response of the saving to the goal")
-                .isNotEmpty()
-                .contains("Successfuly sent rounded figure");
+                                    .isTrue();
 
         verify(creator).createGoal(anyString(), anyString());
     }
@@ -103,10 +101,10 @@ class PublishRoundUpHandlerTest {
 
         when(savingGoalPort.sendMoneyToGoal(any(GoalContainer.class))).thenReturn(false);
 
-        String responseMessage = publishRoundUpHandler.publishToGoal(createGoalTimeframe("brand new goal"));
-        assertThat(responseMessage).as("The response of the saving to the goal")
-                .isNotEmpty()
-                .contains("Did not send money to goal");
+        boolean response = publishRoundUpHandler.publishToGoal(createGoalTimeframe("brand new goal"));
+
+        assertThat(response).as("The response of the saving to the goal")
+                            .isFalse();
 
         verify(creator).createGoal(anyString(), anyString());
     }

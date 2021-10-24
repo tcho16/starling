@@ -39,7 +39,7 @@ public class AccountIdQueryAdapter implements AccountIdQueryPort {
 
     @Override
     public AccountDetails fetchAccountIds(String accountHolderUId) {
-        log.info("queryCategoryPort:+ fetching accounts for accountHolderUid={}", accountHolderUId);
+        log.info("fetchAccountIds:+ fetching accounts for accountHolderUid={}", accountHolderUId);
 
         Request request = buildRequest();
         String responseJson = null;
@@ -64,7 +64,7 @@ public class AccountIdQueryAdapter implements AccountIdQueryPort {
         AccountDTO accountDTO = idOfPrimaryAccount.orElseThrow(() ->
                 new NoPrimaryAccountsWereFoundException("No Primary account was found for the accountHolderUid = " + accountHolderUId));
 
-        log.info("queryCategoryPort:- fetched accountIDs={}", idOfPrimaryAccount);
+        log.info("fetchAccountIds:- fetched accountIDs={}", idOfPrimaryAccount);
         return dtoToAccountDetailsConverter.convert(accountDTO);
     }
 

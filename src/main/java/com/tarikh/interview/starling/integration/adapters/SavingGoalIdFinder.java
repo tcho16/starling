@@ -68,8 +68,6 @@ public class SavingGoalIdFinder implements SavingGoalIdPort {
                 .buildAndExpand(accountUId)
                 .toUri()
                 .toURL();
-
-        log.info("buildURL:- built the URL to gather the transactions={}", finalURL);
         return finalURL;
     }
 }

@@ -59,6 +59,7 @@ public class TransactionQueryAdapter implements TransactionQueryPort {
             throw new UnableToRetrieveTransactionException("No transactions were found from the provided date");
         }
 
+        log.info("queryForTransactionsBasedOnTimeframe:-");
         return transactions;
     }
 
@@ -72,7 +73,6 @@ public class TransactionQueryAdapter implements TransactionQueryPort {
 
     @SneakyThrows
     private URL buildURL(String url, TransactionTimeFrame timeFrame) {
-        log.info("buildURL:+ building the URL from the object={}", timeFrame);
 
         URL finalURL = UriComponentsBuilder.fromHttpUrl(url)
                 .queryParam("minTransactionTimestamp={minTime}")
@@ -85,7 +85,6 @@ public class TransactionQueryAdapter implements TransactionQueryPort {
                 .toUri()
                 .toURL();
 
-        log.info("buildURL:- built the URL to gather the transactions={}", finalURL);
         return finalURL;
     }
 }

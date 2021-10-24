@@ -88,7 +88,7 @@ class RoundUpControllerTest {
         String responseBody = objectMapper.writeValueAsString(goalTimeframeDTO);
 
         when(converter.convert(any(), any())).thenCallRealMethod();
-        when(publishRoundUpPort.publishToGoal(any(GoalTimeframe.class))).thenReturn("random body");
+        when(publishRoundUpPort.publishToGoal(any(GoalTimeframe.class))).thenReturn(true);
 
         String contentAsString = mockMvc.perform(put("/account/{accHolderUId}/saving-goals/transactions/roundup", accountHolderId)
                 .content(responseBody)

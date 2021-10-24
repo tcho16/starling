@@ -25,8 +25,11 @@ public class Config {
 
    @Bean
    public OkHttpClient httpClient() throws IOException {
-      File resource = new ClassPathResource("starling-sandbox-api-certificate.crt").getFile();
-      String cert = new String(Files.readAllBytes(resource.toPath()));
+      InputStream resource = new ClassPathResource("starling-sandbox-api-certificate.crt").getInputStream();
+      String collect = new BufferedReader(new InputStreamReader(resource))
+                                         .lines()
+                                         .collect(Collectors.joining("\n"));
+      String cert = collect;
 
       HandshakeCertificates certificates = new HandshakeCertificates.Builder()
               .addTrustedCertificate(Certificates.decodeCertificatePem(cert))
