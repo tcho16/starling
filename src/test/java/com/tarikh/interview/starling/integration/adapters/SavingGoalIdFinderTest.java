@@ -50,7 +50,7 @@ class SavingGoalIdFinderTest {
 
         mockWebServer.enqueue(mockedResponse);
 
-        HashMap<String, String> savingGoals = savingGoalIdFinder.getSavingGoals(accIID);
+        HashMap<String, String> savingGoals = savingGoalIdFinder.getIdsOfSavingGoals(accIID);
 
         assertThat(savingGoals).as("The map containing the users goals")
                 .isNotEmpty()
@@ -66,7 +66,7 @@ class SavingGoalIdFinderTest {
 
         mockWebServer.enqueue(mockedResponse);
 
-        HashMap<String, String> savingGoals = savingGoalIdFinder.getSavingGoals(accIID);
+        HashMap<String, String> savingGoals = savingGoalIdFinder.getIdsOfSavingGoals(accIID);
 
         assertThat(savingGoals).as("The map containing the users goals")
                 .isEmpty();

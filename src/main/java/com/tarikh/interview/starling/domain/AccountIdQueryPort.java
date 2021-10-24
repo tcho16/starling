@@ -4,5 +4,5 @@ import com.tarikh.interview.starling.domain.models.AccountDetails;
 
 public interface AccountIdQueryPort
 {
-   public AccountDetails fetchAccountIds(String accUId);
+   AccountDetails fetchAccountIds(String accountHolderUId);
 }

@@ -3,7 +3,6 @@ package com.tarikh.interview.starling.integration.adapters;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tarikh.interview.starling.api.Amount;
 import com.tarikh.interview.starling.api.AmountDTO;
-import com.tarikh.interview.starling.api.GoalDTO;
 import com.tarikh.interview.starling.domain.SavingGoalPort;
 import com.tarikh.interview.starling.domain.models.GoalContainer;
 import com.tarikh.interview.starling.integration.exceptions.UnableToAddMoneyToGoalException;
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URL;
-import java.util.*;
+import java.util.UUID;
 
 @Component
 @Slf4j
@@ -37,8 +36,7 @@ public class SavingGoalAdapter implements SavingGoalPort {
         return sendMoney(goalContainer);
     }
 
-    private boolean sendMoney(GoalContainer goalContainer)
-    {
+    private boolean sendMoney(GoalContainer goalContainer) {
         try {
             Request request = new Request.Builder()
                     .url(addMoneyUrl(starlingGoalAddMoneyUrl, goalContainer, goalContainer.getGoalId()))
@@ -49,18 +47,16 @@ public class SavingGoalAdapter implements SavingGoalPort {
                     .build();
 
             int returnResponseCode = client.newCall(request)
-                                            .execute()
-                                            .networkResponse()
-                                            .code();
+                    .execute()
+                    .networkResponse()
+                    .code();
 
-            if(returnResponseCode != 200)
-            {
+            if (returnResponseCode != 200) {
                 return unsuccessfulDepositToGoal;
             }
 
             return successfulDepositToGoal;
-        }catch(Exception e)
-        {
+        } catch (Exception e) {
             log.error("Error in adding money to the goal", e);
             throw new UnableToAddMoneyToGoalException("Was not able to add money to the goal");
         }
@@ -71,9 +67,9 @@ public class SavingGoalAdapter implements SavingGoalPort {
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(AmountDTO.builder()
                 .amount(Amount.builder()
-                                .currency("GBP")
-                                .minorUnits(goalContainer.getAmountToAdd())
-                                .build())
+                        .currency("GBP")
+                        .minorUnits(goalContainer.getAmountToAdd())
+                        .build())
                 .build());
         return RequestBody.create(requestBody, MediaType.parse("application/json"));
     }

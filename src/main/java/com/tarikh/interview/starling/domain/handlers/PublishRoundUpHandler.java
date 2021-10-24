@@ -1,15 +1,10 @@
 package com.tarikh.interview.starling.domain.handlers;
 
-import com.tarikh.interview.starling.domain.AccountIdQueryPort;
-import com.tarikh.interview.starling.domain.PublishRoundUpPort;
-import com.tarikh.interview.starling.domain.SavingGoalPort;
-import com.tarikh.interview.starling.domain.TransactionQueryPort;
+import com.tarikh.interview.starling.domain.*;
 import com.tarikh.interview.starling.domain.models.AccountDetails;
 import com.tarikh.interview.starling.domain.models.GoalContainer;
 import com.tarikh.interview.starling.domain.models.GoalTimeframe;
 import com.tarikh.interview.starling.domain.models.TransactionTimeFrame;
-import com.tarikh.interview.starling.integration.adapters.SavingGoalCreator;
-import com.tarikh.interview.starling.integration.adapters.SavingGoalIdFinder;
 import com.tarikh.interview.starling.integration.converters.GoalContainerConverter;
 import com.tarikh.interview.starling.integration.converters.TransactionTimeFrameConverter;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +24,8 @@ public class PublishRoundUpHandler implements PublishRoundUpPort {
     private final TransactionQueryPort transactionQueryPort;
     private final SavingGoalPort savingGoalPort;
     private final RoundUpCalculator roundUpCalculator;
-    private final SavingGoalIdFinder savingGoalIdFinder;
-    private final SavingGoalCreator creator;
+    private final SavingGoalIdPort savingGoalIdPort;
+    private final SavingGoalCreatorPort savingGoalCreatorPort;
     private final TransactionTimeFrameConverter timeFrameConverter;
     private final GoalContainerConverter goalContainerConverter;
 
@@ -73,10 +68,10 @@ public class PublishRoundUpHandler implements PublishRoundUpPort {
 
     @SneakyThrows
     private String getSavingGoalId(String accountUId, String goalName) {
-        HashMap<String, String> mapOfCurrentGoals = savingGoalIdFinder.getSavingGoals(accountUId);
+        HashMap<String, String> mapOfCurrentGoals = savingGoalIdPort.getIdsOfSavingGoals(accountUId);
 
         if (savingGoalDoesNotExist(goalName, mapOfCurrentGoals)) {
-            Map<String, String> newlyCreatedGoal = creator.createGoal(accountUId, goalName);
+            Map<String, String> newlyCreatedGoal = savingGoalCreatorPort.createGoal(accountUId, goalName);
             return fetchGoalId(newlyCreatedGoal, goalName);
         } else {
             return fetchGoalId(mapOfCurrentGoals, goalName);

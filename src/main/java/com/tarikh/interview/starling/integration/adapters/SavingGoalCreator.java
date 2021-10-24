@@ -2,7 +2,7 @@ package com.tarikh.interview.starling.integration.adapters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tarikh.interview.starling.api.GoalDTO;
-import com.tarikh.interview.starling.domain.models.GoalContainer;
+import com.tarikh.interview.starling.domain.SavingGoalCreatorPort;
 import com.tarikh.interview.starling.integration.exceptions.UnableToCreateGoalException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -21,14 +21,14 @@ import java.util.Map;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class SavingGoalCreator {
+public class SavingGoalCreator implements SavingGoalCreatorPort {
 
     private final String accessToken;
     private final String starlingGoalUrl;
     private final OkHttpClient client;
 
-    //We create the goal and return a map of <String,String> where the K = ID of the goal and V = the goalName
-    public Map<String, String> createGoal(String accUId, String nameOfGoal){// GoalContainer goalContainer){
+    @Override
+    public Map<String, String> createGoal(String accUId, String nameOfGoal) {// GoalContainer goalContainer){
         //Creating the request to send
         Request request = new Request.Builder()
                 .url(buildPutGoalUrl(starlingGoalUrl, accUId))
@@ -48,8 +48,7 @@ public class SavingGoalCreator {
             JSONObject jsonObject = new JSONObject(response);
             return Map.of(jsonObject.getString("savingsGoalUid"), nameOfGoal);
 
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             log.error("Error in creating new goal for user", e);
             throw new UnableToCreateGoalException("Error in creating goal for account" + accUId);
         }

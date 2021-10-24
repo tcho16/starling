@@ -1,6 +1,7 @@
 com\tarikh\interview\starling\StarlingApplicationTests.class
 com\tarikh\interview\starling\domain\handlers\RoundUpCalculatorTest.class
 com\tarikh\interview\starling\integration\adapters\AccountIdQueryAdapterTest.class
+com\tarikh\interview\starling\domain\handlers\PublishRoundUpHandlerTest.class
 com\tarikh\interview\starling\integration\adapters\TransactionQueryAdapterTest.class
 com\tarikh\interview\starling\integration\controllers\RoundUpControllerTest.class
 com\tarikh\interview\starling\integration\adapters\SavingGoalAdapterTest.class

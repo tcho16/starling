@@ -1,5 +1,6 @@
 package com.tarikh.interview.starling.integration.adapters;
 
+import com.tarikh.interview.starling.domain.SavingGoalIdPort;
 import com.tarikh.interview.starling.integration.exceptions.UnableToRetreiveGoalsException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -17,13 +18,13 @@ import java.util.HashMap;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class SavingGoalIdFinder{
+public class SavingGoalIdFinder implements SavingGoalIdPort {
 
     private final String accessToken;
     private final String starlingGoalUrl;
     private final OkHttpClient client;
 
-    public HashMap<String, String> getSavingGoals(String accountUid) throws UnableToRetreiveGoalsException {
+    public HashMap<String, String> getIdsOfSavingGoals(String accountUid) throws UnableToRetreiveGoalsException {
         HashMap<String, String> mapOfGoals = new HashMap<>();
 
         //Create the request
@@ -50,8 +51,7 @@ public class SavingGoalIdFinder{
                 mapOfGoals.put(goalUId, goalName);
             }
 
-        }catch(Exception e)
-        {
+        } catch (Exception e) {
             log.error("Error in fetching the list of goals", e);
             throw new UnableToRetreiveGoalsException("Unable to retreive goals for account " + accountUid);
         }
@@ -60,8 +60,7 @@ public class SavingGoalIdFinder{
     }
 
     @SneakyThrows
-    private URL buildURLToFetchGoals(String url, String accountUId)
-    {
+    private URL buildURLToFetchGoals(String url, String accountUId) {
         URL finalURL = UriComponentsBuilder.fromHttpUrl(url)
                 .buildAndExpand(accountUId)
                 .toUri()

@@ -1,7 +1,6 @@
 package com.tarikh.interview.starling.integration.adapters;
 
 import com.tarikh.interview.starling.domain.TransactionQueryPort;
-import com.tarikh.interview.starling.domain.models.GoalTimeframe;
 import com.tarikh.interview.starling.domain.models.TransactionTimeFrame;
 import com.tarikh.interview.starling.integration.exceptions.UnableToRetrieveTransactionException;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +40,6 @@ public class TransactionQueryAdapter implements TransactionQueryPort {
                     .body()
                     .string();
 
-            //TODO: Refactor this
             JSONObject jsonObject = new JSONObject(response);
             JSONArray feedItems = jsonObject.getJSONArray("feedItems");
 

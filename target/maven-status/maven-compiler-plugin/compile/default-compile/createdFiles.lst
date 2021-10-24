@@ -1,3 +1,4 @@
+com\tarikh\interview\starling\domain\SavingGoalCreatorPort.class
 com\tarikh\interview\starling\integration\converters\TimestampDTOToTimestampDurationConverter.class
 com\tarikh\interview\starling\integration\exceptions\AccessTokenExpiredException.class
 com\tarikh\interview\starling\integration\exceptions\GlobalExceptionHandler.class
@@ -12,6 +13,7 @@ com\tarikh\interview\starling\domain\models\TransactionTimeFrame$TransactionTime
 com\tarikh\interview\starling\integration\config\Config.class
 com\tarikh\interview\starling\api\AccountsDTO.class
 com\tarikh\interview\starling\integration\exceptions\UnableToRetrieveTransactionException.class
+com\tarikh\interview\starling\domain\SavingGoalIdPort.class
 com\tarikh\interview\starling\api\GoalDTO.class
 com\tarikh\interview\starling\domain\models\GoalContainer$GoalContainerBuilder.class
 com\tarikh\interview\starling\api\GoalDTO$GoalDTOBuilder.class

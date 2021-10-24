@@ -21,7 +21,7 @@ public class Config {
 
    @NonNull
    @Value("${starling.accessToken}")
-   String accessToken;
+   private String accessToken;
 
    @Bean
    public OkHttpClient httpClient() throws IOException {
@@ -60,6 +60,7 @@ public class Config {
 
    @Bean
    public String accessToken() {
-      return accessToken;}
+      return accessToken;
+   }
 
 }
