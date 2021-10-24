@@ -2,10 +2,7 @@ package com.tarikh.interview.starling.integration.controllers;
 
 import com.tarikh.interview.starling.api.ResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.tarikh.interview.starling.api.GoalTimeframeDTO;
 import com.tarikh.interview.starling.domain.PublishRoundUpPort;
@@ -29,7 +26,7 @@ public class RoundUpController
       this.converter = converter;
    }
 
-   @PostMapping("account/{accHolderUId}/saving-goals/transactions/roundup")
+   @PutMapping("account/{accHolderUId}/saving-goals/transactions/roundup")
    public ResponseDTO postTransactions(@NonNull @PathVariable String accHolderUId,
                                        @NonNull @RequestBody GoalTimeframeDTO goalTimeframeDTO)
    {

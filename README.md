@@ -31,7 +31,7 @@ Via IntelliJ
 - Import the project and then run the main class located in `src/main.java/com.tarikh/interview/starling/StarlingApplication`.
 
 ## How to use the application
-One endpoint is exposed. It is a POST method. The endpoint is:
+One endpoint is exposed. It is a PUT method. The endpoint is:
 
 `http://localhost:8080/account/{accountHolderUId}/saving-goals/transactions/roundup`
 

@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -60,7 +61,7 @@ class RoundUpControllerTest {
 
         when(publishRoundUpPort.publishToGoal(any(GoalTimeframe.class))).thenThrow(NoPrimaryAccountsWereFoundException.class);
 
-        mockMvc.perform(post("/account/{accHolderUId}/saving-goals/transactions/roundup", accountHolderId)
+        mockMvc.perform(put("/account/{accHolderUId}/saving-goals/transactions/roundup", accountHolderId)
                 .content(responseBody)
                 .contentType("application/json"))
                 .andExpect(status().is4xxClientError());
@@ -75,7 +76,7 @@ class RoundUpControllerTest {
 
         when(publishRoundUpPort.publishToGoal(any(GoalTimeframe.class))).thenThrow(UnableToRetrieveTransactionException.class);
 
-        mockMvc.perform(post("/account/{accHolderUId}/saving-goals/transactions/roundup", accountHolderId)
+        mockMvc.perform(put("/account/{accHolderUId}/saving-goals/transactions/roundup", accountHolderId)
                 .content(responseBody)
                 .contentType("application/json"))
                 .andExpect(status().is4xxClientError());
@@ -89,7 +90,7 @@ class RoundUpControllerTest {
         when(converter.convert(any(), any())).thenCallRealMethod();
         when(publishRoundUpPort.publishToGoal(any(GoalTimeframe.class))).thenReturn("random body");
 
-        String contentAsString = mockMvc.perform(post("/account/{accHolderUId}/saving-goals/transactions/roundup", accountHolderId)
+        String contentAsString = mockMvc.perform(put("/account/{accHolderUId}/saving-goals/transactions/roundup", accountHolderId)
                 .content(responseBody)
                 .contentType("application/json"))
                 .andExpect(status().is2xxSuccessful())
