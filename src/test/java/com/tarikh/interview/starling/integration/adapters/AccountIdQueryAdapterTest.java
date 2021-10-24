@@ -1,5 +1,6 @@
 package com.tarikh.interview.starling.integration.adapters;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tarikh.interview.starling.domain.models.AccountDetails;
 import com.tarikh.interview.starling.integration.converters.AccountDTOToAccountDetailsConverter;
 import com.tarikh.interview.starling.integration.exceptions.NoPrimaryAccountsWereFoundException;
@@ -15,8 +16,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AccountIdQueryAdapterTest {
@@ -30,6 +34,7 @@ class AccountIdQueryAdapterTest {
     private MockWebServer mockWebServer;
     private AccountDTOToAccountDetailsConverter convert;
 
+
     @SneakyThrows
     @BeforeEach
     public void setUp(){
@@ -37,12 +42,29 @@ class AccountIdQueryAdapterTest {
         mockWebServer = new MockWebServer();
         mockWebServer.start();
         String url =  mockWebServer.url("/").toString();
-        accountIdQueryAdapter = new AccountIdQueryAdapter(httpClient(), convert, url, dummyToken);
+        accountIdQueryAdapter = new AccountIdQueryAdapter(httpClient(), convert, url, new ObjectMapper(), dummyToken);
     }
 
     @AfterEach
      void tearDown() throws IOException {
         mockWebServer.shutdown();
+    }
+
+    @Test
+    public void shouldFetchAccountWithPrimaryTag()
+    {
+        MockResponse mockedResponse = new MockResponse()
+                .setBody(jsonResponseWithTwoAccounts())
+                .addHeader("Content-Type", "application/json");
+
+        mockWebServer.enqueue(mockedResponse);
+
+        when(convert.convert(any())).thenCallRealMethod();
+        AccountDetails accountDetails = accountIdQueryAdapter.fetchAccountIds(accHolderUId);
+
+        assertThat(accountDetails).as("the account details fetched for primary account")
+                .hasFieldOrPropertyWithValue("accountUId", accUId)
+                .hasFieldOrPropertyWithValue("categoryId", categoryId);
     }
 
     @Test
@@ -64,9 +86,9 @@ class AccountIdQueryAdapterTest {
         return "{\n" +
                 "  \"accounts\": [\n" +
                 "    {\n" +
-                "      \"accountUid\": \"31d945e6-7655-458a-a90a-9db53a491181\",\n" +
+                "      \"accountUid\": \""+accUId+"\",\n" +
                 "      \"accountType\": \"PRIMARY\",\n" +
-                "      \"defaultCategory\": \"a8f35c14-d7b4-4563-9d3d-04f391959cee\",\n" +
+                "      \"defaultCategory\": \""+ categoryId+"\",\n" +
                 "      \"currency\": \"GBP\",\n" +
                 "      \"createdAt\": \"2021-10-18T21:04:05.309Z\",\n" +
                 "      \"name\": \"Personal\"\n" +
