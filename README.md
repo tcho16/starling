@@ -1,4 +1,4 @@
-# Starling Interview Challenge
+# Starling Interview Challenge - Tarikh Chouhan
 
 This is the code based on the specification that Starling has provided.
 
