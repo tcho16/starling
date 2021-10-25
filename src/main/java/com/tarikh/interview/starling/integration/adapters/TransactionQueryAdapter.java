@@ -14,8 +14,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 //This is the Transaction adapter.
 //We fetch the list of transactions based on the timestamps.
@@ -33,11 +34,21 @@ public class TransactionQueryAdapter implements TransactionQueryPort {
     @Override
     public List<Integer> queryTransactionAmountsBasedOnTimeframe(TransactionTimeFrame timeFrame) throws UnableToRetrieveTransactionException {
 
-        log.info("queryForTransactionsBasedOnTimeframe:+ calling the transaction query endpoint");
+        log.info("queryForTransactionsBasedOnTimeframe:+ fetching transactions");
 
         Request request = buildRequest(timeFrame);
-        List<Integer> transactions = new ArrayList<>();
 
+        List<Integer> transactions = fetchTransactions(timeFrame, request);
+
+        if (transactions.size() == 0) {
+            throw new UnableToRetrieveTransactionException("No transactions were found from the provided date");
+        }
+
+        log.info("queryForTransactionsBasedOnTimeframe:-");
+        return transactions;
+    }
+
+    private List<Integer> fetchTransactions(TransactionTimeFrame timeFrame, Request request) {
         try {
             String response = client.newCall(request)
                     .execute()
@@ -47,20 +58,13 @@ public class TransactionQueryAdapter implements TransactionQueryPort {
             JSONObject jsonObject = new JSONObject(response);
             JSONArray feedItems = jsonObject.getJSONArray("feedItems");
 
-            for (int i = 0; i < feedItems.length(); i++) {
-                Integer amount = feedItems.getJSONObject(i).getJSONObject("amount").getInt("minorUnits");
-                transactions.add(amount);
-            }
+            return IntStream.range(0, feedItems.length())
+                    .mapToObj(counter -> feedItems.getJSONObject(counter).getJSONObject("amount").getInt("minorUnits"))
+                    .collect(Collectors.toList());
         } catch (Exception e) {
+            log.error("Unable to retreive the transactions for the account provided", e);
             throw new UnableToRetrieveTransactionException("Error retrieving transaction for accountId=" + timeFrame.getAccountId());
         }
-
-        if (transactions.size() == 0) {
-            throw new UnableToRetrieveTransactionException("No transactions were found from the provided date");
-        }
-
-        log.info("queryForTransactionsBasedOnTimeframe:-");
-        return transactions;
     }
 
     private Request buildRequest(TransactionTimeFrame timeFrame) {

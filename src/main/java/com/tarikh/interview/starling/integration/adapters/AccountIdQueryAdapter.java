@@ -42,8 +42,22 @@ public class AccountIdQueryAdapter implements AccountIdQueryPort {
         log.info("fetchAccountIds:+ fetching accounts for accountHolderUid={}", accountHolderUId);
 
         Request request = buildRequest();
-        String responseJson = null;
-        AccountsDTO accountsDTO = new AccountsDTO();
+        AccountsDTO accountsDTO = getAccounts(request);
+
+        Optional<AccountDTO> idOfPrimaryAccount = accountsDTO.getAccountDTOList()
+                                                            .stream()
+                                                            .filter(accountDTO -> accountDTO.accountType.equalsIgnoreCase(accountType))
+                                                            .findFirst();
+
+        AccountDTO accountDTO = idOfPrimaryAccount.orElseThrow(() -> new NoPrimaryAccountsWereFoundException("No Primary account was found for the accountHolderUid = " + accountHolderUId));
+
+        log.info("fetchAccountIds:- fetched accountIDs={}", idOfPrimaryAccount);
+        return dtoToAccountDetailsConverter.convert(accountDTO);
+    }
+
+    private AccountsDTO getAccounts(Request request) {
+        String responseJson;
+        AccountsDTO accountsDTO;
         try {
             Response response = client.newCall(request)
                     .execute();
@@ -52,20 +66,12 @@ public class AccountIdQueryAdapter implements AccountIdQueryPort {
             }
             responseJson = response.body().string();
             accountsDTO = mapper.readValue(responseJson, AccountsDTO.class);
-
         } catch (IOException e) {
             e.printStackTrace();
+            throw new NoPrimaryAccountsWereFoundException("Unable to find primary account");
         }
-        Optional<AccountDTO> idOfPrimaryAccount = accountsDTO.getAccountDTOList()
-                .stream()
-                .filter(accountDTO -> accountDTO.accountType.equalsIgnoreCase(accountType))
-                .findFirst();
 
-        AccountDTO accountDTO = idOfPrimaryAccount.orElseThrow(() ->
-                new NoPrimaryAccountsWereFoundException("No Primary account was found for the accountHolderUid = " + accountHolderUId));
-
-        log.info("fetchAccountIds:- fetched accountIDs={}", idOfPrimaryAccount);
-        return dtoToAccountDetailsConverter.convert(accountDTO);
+        return accountsDTO;
     }
 
     @NotNull

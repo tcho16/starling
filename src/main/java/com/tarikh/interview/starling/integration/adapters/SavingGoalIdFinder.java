@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URL;
 import java.util.HashMap;
+import java.util.stream.IntStream;
 
 
 //This adapter is responsible for fetching the goals associated by the user.
@@ -28,17 +30,16 @@ public class SavingGoalIdFinder implements SavingGoalIdPort {
     private final OkHttpClient client;
 
     public HashMap<String, String> getIdsOfSavingGoals(String accountUid) throws UnableToRetreiveGoalsException {
-        HashMap<String, String> mapOfGoals = new HashMap<>();
-
         //Create the request
-        Request request = new Request.Builder()
-                .url(buildURLToFetchGoals(starlingGoalUrl, accountUid))
-                .header("Authorization",
-                        "Bearer " + accessToken)
-                .header("Accept", "application/json")
-                .build();
+        Request request = buildRequest(accountUid);
 
         //Fetch
+        return fetchGoalDetails(accountUid, request);
+    }
+
+    private HashMap<String, String> fetchGoalDetails(String accountUid, Request request) throws UnableToRetreiveGoalsException {
+        HashMap<String, String> mapOfGoals = new HashMap<>();
+
         try {
             String response = client.newCall(request)
                     .execute()
@@ -48,18 +49,28 @@ public class SavingGoalIdFinder implements SavingGoalIdPort {
             JSONObject jsonObject = new JSONObject(response);
             JSONArray savingsGoalList = jsonObject.getJSONArray("savingsGoalList");
 
-            for (int i = 0; i < savingsGoalList.length(); i++) {
-                String goalName = savingsGoalList.getJSONObject(i).getString("name");
-                String goalUId = savingsGoalList.getJSONObject(i).getString("savingsGoalUid");
-                mapOfGoals.put(goalUId, goalName);
-            }
+            IntStream.range(0, savingsGoalList.length())
+                    .forEach(counter -> {
+                        String goalName = savingsGoalList.getJSONObject(counter).getString("name");
+                        String goalUId = savingsGoalList.getJSONObject(counter).getString("savingsGoalUid");
+                        mapOfGoals.put(goalUId, goalName);
+                    });
 
         } catch (Exception e) {
             log.error("Error in fetching the list of goals", e);
             throw new UnableToRetreiveGoalsException("Unable to retreive goals for account " + accountUid);
         }
-
         return mapOfGoals;
+    }
+
+    @NotNull
+    private Request buildRequest(String accountUid) {
+        return new Request.Builder()
+                .url(buildURLToFetchGoals(starlingGoalUrl, accountUid))
+                .header("Authorization",
+                        "Bearer " + accessToken)
+                .header("Accept", "application/json")
+                .build();
     }
 
     @SneakyThrows

@@ -21,6 +21,7 @@ public class RoundUpCalculator
 {
     public int totalNearestPound(List<Integer> transactions)
     {
+        log.info("totalNearestPound:+ totaling the nearest pound for the transactions={}", transactions);
         BigDecimal total = new BigDecimal(0.00);
 
         for(Integer amount : transactions)
@@ -31,6 +32,8 @@ public class RoundUpCalculator
             total = total.add(divide);
         }
 
-        return total.multiply(new BigDecimal(100)).intValueExact();
+        int roundedAmount = total.multiply(new BigDecimal(100)).intValueExact();
+        log.info("totalNearestPound:- rounded amount for the transactions={}", roundedAmount);
+        return  roundedAmount;
     }
 }

@@ -11,6 +11,7 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -30,13 +31,7 @@ public class SavingGoalCreator implements SavingGoalCreatorPort {
     @Override
     public Map<String, String> createGoal(String accUId, String nameOfGoal) {// GoalContainer goalContainer){
         //Creating the request to send
-        Request request = new Request.Builder()
-                .url(buildPutGoalUrl(starlingGoalUrl, accUId))
-                .put(buildRequestBodyForCreatingGoal(nameOfGoal))
-                .header("Authorization",
-                        "Bearer " + accessToken)
-                .header("Accept", "application/json")
-                .build();
+        Request request = getRequest(accUId, nameOfGoal);
 
         //Call the starling endpoint to create the goal
         try {
@@ -52,6 +47,17 @@ public class SavingGoalCreator implements SavingGoalCreatorPort {
             log.error("Error in creating new goal for user", e);
             throw new UnableToCreateGoalException("Error in creating goal for account" + accUId);
         }
+    }
+
+    @NotNull
+    private Request getRequest(String accUId, String nameOfGoal) {
+        return new Request.Builder()
+                .url(buildPutGoalUrl(starlingGoalUrl, accUId))
+                .put(buildRequestBodyForCreatingGoal(nameOfGoal))
+                .header("Authorization",
+                        "Bearer " + accessToken)
+                .header("Accept", "application/json")
+                .build();
     }
 
     @SneakyThrows

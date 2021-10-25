@@ -13,6 +13,7 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -38,18 +39,12 @@ public class SavingGoalAdapter implements SavingGoalPort {
 
     private boolean sendMoney(GoalContainer goalContainer) {
         try {
-            Request request = new Request.Builder()
-                    .url(addMoneyUrl(starlingGoalAddMoneyUrl, goalContainer, goalContainer.getGoalId()))
-                    .put(buildRequestBodyForAddingMoneyToGoal(goalContainer))
-                    .header("Authorization",
-                            "Bearer " + accessToken)
-                    .header("Accept", "application/json")
-                    .build();
+            Request request = buildRequest(goalContainer);
 
             int returnResponseCode = client.newCall(request)
-                    .execute()
-                    .networkResponse()
-                    .code();
+                                            .execute()
+                                            .networkResponse()
+                                            .code();
 
             if (returnResponseCode != 200) {
                 return unsuccessfulDepositToGoal;
@@ -60,6 +55,17 @@ public class SavingGoalAdapter implements SavingGoalPort {
             log.error("Error in adding money to the goal", e);
             throw new UnableToAddMoneyToGoalException("Was not able to add money to the goal");
         }
+    }
+
+    @NotNull
+    private Request buildRequest(GoalContainer goalContainer) {
+        return new Request.Builder()
+                .url(addMoneyUrl(starlingGoalAddMoneyUrl, goalContainer, goalContainer.getGoalId()))
+                .put(buildRequestBodyForAddingMoneyToGoal(goalContainer))
+                .header("Authorization",
+                        "Bearer " + accessToken)
+                .header("Accept", "application/json")
+                .build();
     }
 
     @SneakyThrows
