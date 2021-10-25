@@ -15,10 +15,10 @@ There have been some assumptions made when coding this such as:
 - We also have an API package in which these are the data structure/objects the external entities uses. 
 - We have a model package in the domain package which is exclusively used within the domain package.
 
-##How to run this application:
+## How to run this application:
 - Need to have Java 11 installed and maven.
 - Ensure you have a valid access Token and is put in the application.properties file.
-- Ensure you have a valid X509 certificate (can be downloaded from the Starling docs website) and is placed in the 'resources' folder with the name 'starling-sandbox-api-certificate.crf'.
+- Ensure you have a valid X509 certificate  and is placed in the 'resources' folder with the name 'starling-sandbox-api-certificate.crt'. (Can be downloaded from the Starling docs website: https://developer.starlingbank.com/starling-sandbox-api-certificate.crt).
 
 Steps:
 
