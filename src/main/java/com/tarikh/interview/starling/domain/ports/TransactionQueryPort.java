@@ -1,4 +1,4 @@
-package com.tarikh.interview.starling.domain;
+package com.tarikh.interview.starling.domain.ports;
 
 import java.util.List;
 

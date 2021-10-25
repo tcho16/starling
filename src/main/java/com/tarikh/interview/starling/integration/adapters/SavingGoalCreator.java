@@ -2,7 +2,7 @@ package com.tarikh.interview.starling.integration.adapters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tarikh.interview.starling.api.GoalDTO;
-import com.tarikh.interview.starling.domain.SavingGoalCreatorPort;
+import com.tarikh.interview.starling.domain.ports.SavingGoalCreatorPort;
 import com.tarikh.interview.starling.integration.exceptions.UnableToCreateGoalException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;

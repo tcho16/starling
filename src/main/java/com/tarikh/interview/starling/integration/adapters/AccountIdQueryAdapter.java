@@ -3,7 +3,7 @@ package com.tarikh.interview.starling.integration.adapters;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tarikh.interview.starling.api.AccountDTO;
 import com.tarikh.interview.starling.api.AccountsDTO;
-import com.tarikh.interview.starling.domain.AccountIdQueryPort;
+import com.tarikh.interview.starling.domain.ports.AccountIdQueryPort;
 import com.tarikh.interview.starling.domain.models.AccountDetails;
 import com.tarikh.interview.starling.integration.converters.AccountDTOToAccountDetailsConverter;
 import com.tarikh.interview.starling.integration.exceptions.AccessTokenExpiredException;

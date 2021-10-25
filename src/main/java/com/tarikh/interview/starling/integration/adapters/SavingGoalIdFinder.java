@@ -1,6 +1,6 @@
 package com.tarikh.interview.starling.integration.adapters;
 
-import com.tarikh.interview.starling.domain.SavingGoalIdPort;
+import com.tarikh.interview.starling.domain.ports.SavingGoalIdPort;
 import com.tarikh.interview.starling.integration.exceptions.UnableToRetreiveGoalsException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;

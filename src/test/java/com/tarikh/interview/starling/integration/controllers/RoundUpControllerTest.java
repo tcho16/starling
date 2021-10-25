@@ -3,7 +3,7 @@ package com.tarikh.interview.starling.integration.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tarikh.interview.starling.api.GoalTimeframeDTO;
 import com.tarikh.interview.starling.api.ResponseDTO;
-import com.tarikh.interview.starling.domain.PublishRoundUpPort;
+import com.tarikh.interview.starling.domain.ports.PublishRoundUpPort;
 import com.tarikh.interview.starling.domain.models.GoalTimeframe;
 import com.tarikh.interview.starling.integration.converters.TimestampDTOToTimestampDurationConverter;
 import com.tarikh.interview.starling.integration.exceptions.NoPrimaryAccountsWereFoundException;
@@ -16,7 +16,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;

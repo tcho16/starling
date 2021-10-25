@@ -3,7 +3,7 @@ package com.tarikh.interview.starling.integration.adapters;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tarikh.interview.starling.api.Amount;
 import com.tarikh.interview.starling.api.AmountDTO;
-import com.tarikh.interview.starling.domain.SavingGoalPort;
+import com.tarikh.interview.starling.domain.ports.SavingGoalPort;
 import com.tarikh.interview.starling.domain.models.GoalContainer;
 import com.tarikh.interview.starling.integration.exceptions.UnableToAddMoneyToGoalException;
 import lombok.RequiredArgsConstructor;

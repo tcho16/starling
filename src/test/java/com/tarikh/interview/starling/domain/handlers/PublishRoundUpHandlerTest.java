@@ -1,12 +1,10 @@
 package com.tarikh.interview.starling.domain.handlers;
 
-import com.tarikh.interview.starling.domain.*;
 import com.tarikh.interview.starling.domain.models.AccountDetails;
 import com.tarikh.interview.starling.domain.models.GoalContainer;
 import com.tarikh.interview.starling.domain.models.GoalTimeframe;
 import com.tarikh.interview.starling.domain.models.TransactionTimeFrame;
-import com.tarikh.interview.starling.integration.adapters.SavingGoalCreator;
-import com.tarikh.interview.starling.integration.adapters.SavingGoalIdFinder;
+import com.tarikh.interview.starling.domain.ports.*;
 import com.tarikh.interview.starling.integration.converters.GoalContainerConverter;
 import com.tarikh.interview.starling.integration.converters.TransactionTimeFrameConverter;
 import com.tarikh.interview.starling.integration.exceptions.UnableToRetreiveGoalsException;

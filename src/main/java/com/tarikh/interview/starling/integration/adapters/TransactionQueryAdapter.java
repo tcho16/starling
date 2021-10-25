@@ -1,6 +1,6 @@
 package com.tarikh.interview.starling.integration.adapters;
 
-import com.tarikh.interview.starling.domain.TransactionQueryPort;
+import com.tarikh.interview.starling.domain.ports.TransactionQueryPort;
 import com.tarikh.interview.starling.domain.models.TransactionTimeFrame;
 import com.tarikh.interview.starling.integration.exceptions.UnableToRetrieveTransactionException;
 import lombok.RequiredArgsConstructor;

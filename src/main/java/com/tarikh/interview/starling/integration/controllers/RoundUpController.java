@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.tarikh.interview.starling.api.GoalTimeframeDTO;
-import com.tarikh.interview.starling.domain.PublishRoundUpPort;
+import com.tarikh.interview.starling.domain.ports.PublishRoundUpPort;
 import com.tarikh.interview.starling.domain.models.GoalTimeframe;
 import com.tarikh.interview.starling.integration.converters.TimestampDTOToTimestampDurationConverter;
 
