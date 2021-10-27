@@ -1,6 +1,7 @@
 package com.tarikh.interview.starling.integration.controllers;
 
 import com.tarikh.interview.starling.api.ResponseDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import com.tarikh.interview.starling.api.GoalTimeframeDTO;
 import com.tarikh.interview.starling.domain.ports.PublishRoundUpPort;
 import com.tarikh.interview.starling.domain.models.GoalTimeframe;
 import com.tarikh.interview.starling.integration.converters.TimestampDTOToTimestampDurationConverter;
+import com.tarikh.interview.starling.integration.exceptions.UnableToAddMoneyToGoalException;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +32,7 @@ public class RoundUpController
 
    @PutMapping("account/{accHolderUId}/saving-goals/transactions/roundup")
    public ResponseEntity<ResponseDTO> putRoundedUpTransactions(@NonNull @PathVariable String accHolderUId,
-                                                  @NonNull @RequestBody GoalTimeframeDTO goalTimeframeDTO)
+                                                               @NonNull @RequestBody GoalTimeframeDTO goalTimeframeDTO)
    {
       log.info("postTransactions:+ received request={} for accHolderId={}", goalTimeframeDTO, accHolderUId);
       GoalTimeframe goalTimeframe = converter.convert(accHolderUId, goalTimeframeDTO);
@@ -38,19 +40,20 @@ public class RoundUpController
       boolean successfullySentMoneyToGoal = roundUpHandler.publishToGoal(goalTimeframe);
 
       log.info("postTransactions:-");
-      if(successfullySentMoneyToGoal)
+      if (successfullySentMoneyToGoal)
       {
          return new ResponseEntity<>(buildResponse("Successfully deposited money into goal"),
-                                                   HttpStatus.ACCEPTED);
-      } else {
-         return new ResponseEntity<>(buildResponse("Could not deposit money"),
-                 HttpStatus.EXPECTATION_FAILED);
+                                     HttpStatus.ACCEPTED);
+      } else
+      {
+         throw new UnableToAddMoneyToGoalException("Was not able to add money to the goal for the acc=" + accHolderUId);
       }
    }
 
-   private ResponseDTO buildResponse(String messageOfPublishingToGoal) {
+   private ResponseDTO buildResponse(String messageOfPublishingToGoal)
+   {
       return ResponseDTO.builder()
-              .message(messageOfPublishingToGoal)
-              .build();
+                        .message(messageOfPublishingToGoal)
+                        .build();
    }
 }
