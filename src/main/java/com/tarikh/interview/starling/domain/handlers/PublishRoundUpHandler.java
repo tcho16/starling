@@ -24,6 +24,10 @@ import java.util.Map;
 //Then the fetches the ID of the goal
 //It then persists the rounded value to the goal.
 
+//NOTE: I would've combined the SavingGoalIdPort and SavingGoalCreatorPort into the SavingGoalPort interface but the implementation would
+//break the SRP (single reponsibility principle) since the implementation of the class would be doing a lot more things hence
+//I broke it up into seperate interfaces.
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
