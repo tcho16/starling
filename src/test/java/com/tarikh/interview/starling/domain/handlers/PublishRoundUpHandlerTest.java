@@ -7,6 +7,7 @@ import com.tarikh.interview.starling.domain.models.TransactionTimeFrame;
 import com.tarikh.interview.starling.domain.ports.*;
 import com.tarikh.interview.starling.integration.converters.GoalContainerConverter;
 import com.tarikh.interview.starling.integration.converters.TransactionTimeFrameConverter;
+import com.tarikh.interview.starling.integration.exceptions.NoPrimaryAccountsWereFoundException;
 import com.tarikh.interview.starling.integration.exceptions.UnableToRetreiveGoalsException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,10 +18,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Instant;
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PublishRoundUpHandlerTest {
@@ -52,20 +53,18 @@ class PublishRoundUpHandlerTest {
     private final Instant instant = Instant.now();
 
     @Test
-    public void shouldReturnSuccessfulResponseUponDepositingMoney() throws UnableToRetreiveGoalsException {
+    public void shouldNotThrowErrorIfSuccessfulUponDepositingMoney() throws UnableToRetreiveGoalsException {
         when(accountIdQueryPort.fetchAccountIds(accountHolderId)).thenReturn(createAccountDetails());
         when(timeFrameConverter.convertToTransactionTimeFrame(any(AccountDetails.class), any(Instant.class))).thenCallRealMethod();
         when(transactionQueryPort.queryTransactionAmountsBasedOnTimeframe(any(TransactionTimeFrame.class))).thenReturn(listOfTransactions(1,2,3));
         when(roundUpCalculator.totalNearestPound(any())).thenReturn(10);
-        when(savingGoalIdFinder.getIdsOfSavingGoals(anyString())).thenReturn(createMapOfGoals());
+        when(savingGoalIdFinder.getIdsOfSavingGoals(anyString())).thenReturn(mapOfGoalDetails());
 
         when(goalContainerConverter.convert(anyInt(), anyString(), anyString(), anyString())).thenReturn(buildGoalContainer());
 
-        when(savingGoalPort.sendMoneyToGoal(any(GoalContainer.class))).thenReturn(true);
+        doNothing().when(savingGoalPort).sendMoneyToGoal(any(GoalContainer.class));
 
-        boolean response = publishRoundUpHandler.publishToGoal(createGoalTimeframe(goalName));
-        assertThat(response).as("The response of the saving to the goal")
-                            .isTrue();
+        assertDoesNotThrow(() -> {publishRoundUpHandler.publishToGoal(createGoalTimeframe(goalName));});
     }
 
     @Test
@@ -74,35 +73,46 @@ class PublishRoundUpHandlerTest {
         when(timeFrameConverter.convertToTransactionTimeFrame(any(AccountDetails.class), any(Instant.class))).thenCallRealMethod();
         when(transactionQueryPort.queryTransactionAmountsBasedOnTimeframe(any(TransactionTimeFrame.class))).thenReturn(listOfTransactions(1,2,3));
         when(roundUpCalculator.totalNearestPound(any())).thenReturn(10);
-        when(savingGoalIdFinder.getIdsOfSavingGoals(anyString())).thenReturn(createMapOfGoals());
+        when(savingGoalIdFinder.getIdsOfSavingGoals(anyString())).thenReturn(mapOfGoalDetails());
 
         when(goalContainerConverter.convert(anyInt(), anyString(), anyString(), anyString())).thenReturn(buildGoalContainer());
 
-        when(savingGoalPort.sendMoneyToGoal(any(GoalContainer.class))).thenReturn(true);
+        doNothing().when(savingGoalPort).sendMoneyToGoal(any(GoalContainer.class));
 
-        boolean responseMessage = publishRoundUpHandler.publishToGoal(createGoalTimeframe("brand new goal"));
-        assertThat(responseMessage).as("The response of the saving to the goal")
-                                    .isTrue();
+        assertDoesNotThrow(() -> {publishRoundUpHandler.publishToGoal(createGoalTimeframe("goalName"));});
 
         verify(creator).createGoal(anyString(), anyString());
     }
 
     @Test
-    public void shouldIndicateThatFailingToSaveMoneyToGoalFailed() throws UnableToRetreiveGoalsException {
+    public void shouldNotCreateGoalIfCurrentGoalDoesExist() throws UnableToRetreiveGoalsException {
         when(accountIdQueryPort.fetchAccountIds(accountHolderId)).thenReturn(createAccountDetails());
         when(timeFrameConverter.convertToTransactionTimeFrame(any(AccountDetails.class), any(Instant.class))).thenCallRealMethod();
         when(transactionQueryPort.queryTransactionAmountsBasedOnTimeframe(any(TransactionTimeFrame.class))).thenReturn(listOfTransactions(1,2,3));
         when(roundUpCalculator.totalNearestPound(any())).thenReturn(10);
-        when(savingGoalIdFinder.getIdsOfSavingGoals(anyString())).thenReturn(createMapOfGoals());
+        when(savingGoalIdFinder.getIdsOfSavingGoals(anyString())).thenReturn(mapOfGoalDetails());
 
         when(goalContainerConverter.convert(anyInt(), anyString(), anyString(), anyString())).thenReturn(buildGoalContainer());
 
-        when(savingGoalPort.sendMoneyToGoal(any(GoalContainer.class))).thenReturn(false);
+        doNothing().when(savingGoalPort).sendMoneyToGoal(any(GoalContainer.class));
 
-        boolean response = publishRoundUpHandler.publishToGoal(createGoalTimeframe("brand new goal"));
+        assertDoesNotThrow(() -> {publishRoundUpHandler.publishToGoal(createGoalTimeframe(goalName));});
 
-        assertThat(response).as("The response of the saving to the goal")
-                            .isFalse();
+        verify(creator, times(0)).createGoal(anyString(), anyString());
+    }
+
+    @Test
+    public void shouldIndicateThatSavingMoneyToGoalFailedWithAnException() throws UnableToRetreiveGoalsException {
+        when(accountIdQueryPort.fetchAccountIds(accountHolderId)).thenReturn(createAccountDetails());
+        when(timeFrameConverter.convertToTransactionTimeFrame(any(AccountDetails.class), any(Instant.class))).thenCallRealMethod();
+        when(transactionQueryPort.queryTransactionAmountsBasedOnTimeframe(any(TransactionTimeFrame.class))).thenReturn(listOfTransactions(1,2,3));
+        when(roundUpCalculator.totalNearestPound(any())).thenReturn(10);
+        when(savingGoalIdFinder.getIdsOfSavingGoals(anyString())).thenReturn(mapOfGoalDetails());
+        when(goalContainerConverter.convert(anyInt(), anyString(), anyString(), anyString())).thenReturn(buildGoalContainer());
+
+        doThrow(NoPrimaryAccountsWereFoundException.class).when(savingGoalPort).sendMoneyToGoal(any());
+
+        assertThrows(NoPrimaryAccountsWereFoundException.class, () ->  publishRoundUpHandler.publishToGoal(createGoalTimeframe("brand new goal")));
 
         verify(creator).createGoal(anyString(), anyString());
     }
@@ -116,7 +126,7 @@ class PublishRoundUpHandlerTest {
                             .build();
     }
 
-    private HashMap<String, String> createMapOfGoals() {
+    private HashMap<String, String> mapOfGoalDetails() {
         HashMap<String, String> map = new HashMap<>();
         map.put(goalId, goalName);
         return map;

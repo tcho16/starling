@@ -1,6 +1,7 @@
 package com.tarikh.interview.starling.integration.adapters;
 
 import com.tarikh.interview.starling.domain.models.GoalContainer;
+import com.tarikh.interview.starling.integration.exceptions.UnableToAddMoneyToGoalException;
 import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
 import okhttp3.mockwebserver.MockResponse;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class SavingGoalAdapterTest {
@@ -56,7 +58,7 @@ class SavingGoalAdapterTest {
 
     @SneakyThrows
     @Test
-    public void shouldIndicateSuccessfullySentMoneyToGoal()
+    public void shouldIndicateSuccessfullySentMoneyToGoalIfResponseIsValid()
     {
         MockResponse mockedResponse = new MockResponse()
                 .addHeader("Content-Type", "application/json");
@@ -65,15 +67,12 @@ class SavingGoalAdapterTest {
 
         GoalContainer goal = createGoalContainer("Bobs New Goal");
 
-        boolean isSuccess = savingGoalAdapter.sendMoneyToGoal(goal);
-
-        assertThat(isSuccess).as("indication whether the money was sent")
-                .isTrue();
+        assertDoesNotThrow(() -> {savingGoalAdapter.sendMoneyToGoal(goal);});
     }
 
     @SneakyThrows
     @Test
-    public void shouldIndicateMoneyWasNotDeposited()
+    public void shouldIndicateMoneyWasNotDepositedViaExceptionIfResponseIsInvalid()
     {
         MockResponse mockedResponse = new MockResponse()
                 .setResponseCode(500)
@@ -83,9 +82,7 @@ class SavingGoalAdapterTest {
 
         GoalContainer goal = createGoalContainer("Bobs goal");
 
-        boolean isSuccess = savingGoalAdapter.sendMoneyToGoal(goal);
-
-        assertThat(isSuccess).isFalse();
+        assertThrows(UnableToAddMoneyToGoalException.class, () ->  savingGoalAdapter.sendMoneyToGoal(goal));
     }
 
     private GoalContainer createGoalContainer(String nameOfGoal) {

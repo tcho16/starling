@@ -4,5 +4,5 @@ import com.tarikh.interview.starling.domain.models.GoalTimeframe;
 
 public interface PublishRoundUpPort
 {
-   boolean publishToGoal(GoalTimeframe goalTimeframe);
+   void publishToGoal(GoalTimeframe goalTimeframe);
 }

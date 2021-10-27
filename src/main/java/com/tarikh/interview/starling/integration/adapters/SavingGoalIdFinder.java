@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.stream.IntStream;
@@ -41,10 +42,7 @@ public class SavingGoalIdFinder implements SavingGoalIdPort {
         HashMap<String, String> mapOfGoals = new HashMap<>();
 
         try {
-            String response = client.newCall(request)
-                    .execute()
-                    .body()
-                    .string();
+            String response = fetchGoals(request);
 
             JSONObject jsonObject = new JSONObject(response);
             JSONArray savingsGoalList = jsonObject.getJSONArray("savingsGoalList");
@@ -61,6 +59,19 @@ public class SavingGoalIdFinder implements SavingGoalIdPort {
             throw new UnableToRetreiveGoalsException("Unable to retreive goals for account " + accountUid);
         }
         return mapOfGoals;
+    }
+
+    @SneakyThrows
+    @NotNull
+    private String fetchGoals(Request request) {
+        try {
+            return client.newCall(request)
+                    .execute()
+                    .body()
+                    .string();
+        } catch (IOException e) {
+            throw new UnableToRetreiveGoalsException("Error in calling the service to fetch goals");
+        }
     }
 
     @NotNull

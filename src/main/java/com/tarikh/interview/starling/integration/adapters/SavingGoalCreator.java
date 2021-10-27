@@ -67,8 +67,7 @@ public class SavingGoalCreator implements SavingGoalCreatorPort {
                 .currency("GBP")
                 .name(goalName)
                 .build());
-        System.out.println("THIS IS THE REQUEST BODY FOR CREATING A GOAL");
-        System.out.println(requestBody);
+
         return RequestBody.create(requestBody, MediaType.parse("application/json"));
     }
 

@@ -43,7 +43,7 @@ public class PublishRoundUpHandler implements PublishRoundUpPort {
 
     @SneakyThrows
     @Override
-    public boolean publishToGoal(GoalTimeframe goalTimeframe) {
+    public void publishToGoal(GoalTimeframe goalTimeframe) {
         log.info("publishToGoal:+ goal={}", goalTimeframe);
 
         //Fetch the categoryId and accountId for the given accountHolderUId
@@ -70,10 +70,9 @@ public class PublishRoundUpHandler implements PublishRoundUpPort {
                 savingGoalID);
 
         //Call the saving goal adapter to persist the amount
-        boolean isSuccessful = savingGoalPort.sendMoneyToGoal(goalContainer);
+        savingGoalPort.sendMoneyToGoal(goalContainer);
 
-        log.info("publishToGoal:-");
-        return isSuccessful;
+        log.info("publishToGoal:- published amount={} to goal={}", totalSavedUpFromTransactions, goalTimeframe.getGoalName());
     }
 
     //This method gets the ID of the saving goal the user wants to deposit into

@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.UUID;
 
@@ -28,32 +29,32 @@ public class SavingGoalAdapter implements SavingGoalPort {
     private final String accessToken;
     private final String starlingGoalAddMoneyUrl;
     private final OkHttpClient client;
-    private boolean unsuccessfulDepositToGoal = false;
-    private boolean successfulDepositToGoal = true;
 
     @SneakyThrows
     @Override
-    public boolean sendMoneyToGoal(GoalContainer goalContainer) {
-        return sendMoney(goalContainer);
+    public void sendMoneyToGoal(GoalContainer goalContainer) {
+        sendMoney(goalContainer);
     }
 
-    private boolean sendMoney(GoalContainer goalContainer) {
-        try {
+    private void sendMoney(GoalContainer goalContainer) {
             Request request = buildRequest(goalContainer);
 
-            int returnResponseCode = client.newCall(request)
+            int returnResponseCode = callStarlingGoalPersistApi(request);
+
+            if (returnResponseCode != 200) {
+                throw new UnableToAddMoneyToGoalException("Was not able to add money to the goal");
+            }
+    }
+
+    private int callStarlingGoalPersistApi(Request request) {
+        try {
+            return client.newCall(request)
                                             .execute()
                                             .networkResponse()
                                             .code();
-
-            if (returnResponseCode != 200) {
-                return unsuccessfulDepositToGoal;
-            }
-
-            return successfulDepositToGoal;
-        } catch (Exception e) {
-            log.error("Error in adding money to the goal", e);
-            throw new UnableToAddMoneyToGoalException("Was not able to add money to the goal");
+        } catch (IOException e) {
+            log.error("Error in calling the Starling persist api", e);
+            throw new UnableToAddMoneyToGoalException("Error in calling the Starling persist api");
         }
     }
 

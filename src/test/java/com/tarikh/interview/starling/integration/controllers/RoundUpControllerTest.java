@@ -19,8 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,7 +58,7 @@ class RoundUpControllerTest {
 
         when(converter.convert(any(), any())).thenCallRealMethod();
 
-        when(publishRoundUpPort.publishToGoal(any(GoalTimeframe.class))).thenThrow(NoPrimaryAccountsWereFoundException.class);
+        doThrow(NoPrimaryAccountsWereFoundException.class).when(publishRoundUpPort).publishToGoal(any());
 
         mockMvc.perform(put("/account/{accHolderUId}/saving-goals/transactions/roundup", accountHolderId)
                 .content(responseBody)
@@ -73,7 +73,7 @@ class RoundUpControllerTest {
 
         when(converter.convert(any(), any())).thenCallRealMethod();
 
-        when(publishRoundUpPort.publishToGoal(any(GoalTimeframe.class))).thenThrow(UnableToRetrieveTransactionException.class);
+        doThrow(UnableToRetrieveTransactionException.class).when(publishRoundUpPort).publishToGoal(any());
 
         mockMvc.perform(put("/account/{accHolderUId}/saving-goals/transactions/roundup", accountHolderId)
                 .content(responseBody)
@@ -87,7 +87,7 @@ class RoundUpControllerTest {
         String responseBody = objectMapper.writeValueAsString(goalTimeframeDTO);
 
         when(converter.convert(any(), any())).thenCallRealMethod();
-        when(publishRoundUpPort.publishToGoal(any(GoalTimeframe.class))).thenReturn(true);
+//        when(publishRoundUpPort.publishToGoal(any(GoalTimeframe.class))).thenReturn(true);
 
         String contentAsString = mockMvc.perform(put("/account/{accHolderUId}/saving-goals/transactions/roundup", accountHolderId)
                 .content(responseBody)
